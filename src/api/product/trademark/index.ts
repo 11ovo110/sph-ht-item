@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import type { trademark, responseTrademarkData  } from "./model/index";
 
 enum API {
   TradeMark = '/admin/product/baseTrademark/',
@@ -7,14 +8,14 @@ enum API {
   DeleteTradeMark = '/admin/product/baseTrademark/remove'
 }
 
-export const reqTradeMark = (page: any, limit: any) => request.get(API.TradeMark + `${page}/${limit}`);
+export const reqTradeMark = (page: string, limit: string) => request.get<any, responseTrademarkData>(API.TradeMark + `${page}/${limit}`);
 
-export const reqAddTradeMark = (data: any) => {
+export const reqAddTradeMark = (data: trademark) => {
   if(data.id) {
-    return request.put(API.UpdateTradeMark, data);
+    return request.put<any, any>(API.UpdateTradeMark, data);
   }else {
-    return request.post(API.AddTradeMark, data);
+    return request.post<any, any>(API.AddTradeMark, data);
   }
 }
 
-export const reqDeleteTradeMark = (id: string) => request.delete(API.DeleteTradeMark + `/${id}`);
+export const reqDeleteTradeMark = (id: string) => request.delete<any, any>(API.DeleteTradeMark + `/${id}`);

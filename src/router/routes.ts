@@ -62,7 +62,7 @@ import type { RouteRecordRaw } from 'vue-router';
         name: 'Trademark',
         component: () => import('@/views/product/trademark/trademark.vue'),
         meta: {
-          title: '品牌属性',
+          title: '品牌管理',
           icon: 'ele-Present',
         }
       },
@@ -71,7 +71,7 @@ import type { RouteRecordRaw } from 'vue-router';
         name: 'Attr',
         component: () => import('@/views/product/attr/attr.vue'),
         meta: {
-          title: '平台属性',
+          title: '平台属性管理',
           icon: 'ele-CollectionTag',
         }
       },
