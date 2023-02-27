@@ -7,17 +7,17 @@ enum API {
     getTrademarkList="/admin/product/baseTrademark/",
     addTrademark = '/admin/product/baseTrademark/save',
     updateTrademark = '/admin/product/baseTrademark/update',
-    deleTrademark = '/admin/product/baseTrademark/remove/'
+    deleteTrademark = '/admin/product/baseTrademark/remove/'
 }
 //获取已有品牌的数据
 export const reqTrademarkList = (page:number,limit:number)=>request.get(API.getTrademarkList+`${page}/${limit}`)
 
-export const reqAddTrademark = (data: any) => {
+export const AddTrademark = (data: any) => {
     if(data.id) {
-        request.put(API.updateTrademark, data);
+        return request.put(API.updateTrademark, data);
     }else {
-        request.post(API.addTrademark, data);
+        return request.post(API.addTrademark, data);
     }
 }
 
-export const reqDeleteTrademark = (id: any) => request.delete(API.deleTrademark + id)
+export const DeleteTrademark = (id: any) => request.delete(API.deleteTrademark + id);

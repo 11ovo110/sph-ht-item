@@ -3,8 +3,10 @@
   <!-- 具名插槽：header,设置卡片头部 -->
   <!-- body-style:设置卡片身体部分样式 -->
   <el-card shadow="hover">
-    <el-button type="primary" :icon="Plus" @click="AddTrademark">添加品牌</el-button>
-    <el-button type="primary" @click="ExportExcel">将此页数据导出excel</el-button>
+    <el-button type="primary" :icon="Plus" @click="add">添加品牌</el-button>
+    <el-button type="primary" @click="ExportExcel"
+      >将此页数据导出excel</el-button
+    >
     <!-- 表格组件 -->
     <el-table border style="margin: 10px 0px" :data="records">
       <el-table-column
@@ -23,13 +25,13 @@
       <el-table-column label="品牌操作">
         <template #="{ row, $index }">
           <el-button type="warning" :icon="Edit" @click="updateTrademark(row)"></el-button>
-          <el-popconfirm :title="`你确定删除${row.tmName}吗`" @confirm="deleteTrademark(row.id)">
-          <template #reference>
-            <el-button type="danger" :icon="Delete"></el-button>
-          </template>
+          <el-popconfirm :title="`你确定删除${row.tmName}吗`" @confirm="deletetrademark(row.id)">
+            <template #reference>
+           <el-button type="danger" :icon="Delete"></el-button>
+            </template>
          </el-popconfirm>
-        </template>
-      </el-table-column>
+           </template>
+          </el-table-column>
     </el-table>
     <!-- 分页器组件 -->
     <!-- 
@@ -53,18 +55,19 @@
       @current-change="getTradeMarkList"
       @size-change="sizeChange"
     />
-    <el-dialog v-model="dialogFormVisible" class="el-dialog" :title="addSearchParams.id ? '修改品牌' : '添加品牌'" >
-    <el-form :rules="rules" :model="addSearchParams" ref="formRef">
+    <el-dialog v-model="dialogFormVisible" title="添加品牌" class="el-dialog">
+    <el-form :model="addSearchParams" :rules="rules" ref="formRef">
       <el-form-item label="品牌名称" label-width="100px" prop="tmName">
-        <el-input placeholder="请输入品牌名称" v-model="addSearchParams.tmName" />
+        <el-input v-model="addSearchParams.tmName"/>
       </el-form-item>
       <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
         <el-upload
-        class="avatar-uploader"
-        action="/app-dev/admin/product/fileUpload"
-        :show-file-list="false"
-        :on-success="handleAvatarSuccess"
-        :before-upload="beforeAvatarUpload">
+    class="avatar-uploader"
+    action="/app-dev/admin/product/fileUpload"
+    :show-file-list="false"
+    :on-success="handleAvatarSuccess"
+    :before-upload="beforeAvatarUpload"
+  >
     <img v-if="addSearchParams.logoUrl" :src="addSearchParams.logoUrl" class="avatar" />
     <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
   </el-upload>
@@ -73,7 +76,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="add">
+        <el-button type="primary" @click="AddtradeMark">
           确定
         </el-button>
       </span>
@@ -83,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 import {
   Plus,
   DArrowLeft,
@@ -94,8 +97,8 @@ import {
 //引入ref响应式数据函数
 import { ref, onMounted, reactive, nextTick } from "vue";
 //引入请求方法
-import { reqAddTrademark, reqTrademarkList, reqDeleteTrademark } from "../../../api/product/trademark/index";
-import { ElMessage } from 'element-plus';
+import { reqTrademarkList, AddTrademark, DeleteTrademark } from "../../../api/product/trademark/index";
+import { ElMessage } from "element-plus";
 //收集当前页码
 let pageNo = ref<number>(1);
 //收集一页展示几条数据
@@ -105,21 +108,21 @@ let total = ref<number>(0);
 let records = ref<any>([]);
 // 获取表单实例
 let formRef = ref();
-//组件挂载完毕:先获取一次已有品牌数据
+// 设置dialog显示与隐藏
+let dialogFormVisible = ref(false);
+// 设置获取input表单数据的参数
 let addSearchParams = reactive({
   tmName: '',
   logoUrl: ''
 })
-
-let dialogFormVisible = ref(false);
-
+//组件挂载完毕:先获取一次已有品牌数据
 onMounted(() => {
   //组件挂载完毕先获取一次商品数据
   getTradeMarkList();
 });
 
 //获取已有品牌的数据
-const getTradeMarkList = async (pager=1) => {
+const getTradeMarkList = async (pager = 1) => {
   //修改当前页码
   pageNo.value = pager;
   let result: any = await reqTrademarkList(pageNo.value, pageSize.value);
@@ -132,44 +135,32 @@ const getTradeMarkList = async (pager=1) => {
 const sizeChange = () => {
   //立马再次发请求
   getTradeMarkList();
-
 };
 
-// 导出excel的回调函数
-let ExportExcel = () => {
-  let worksheet = XLSX.utils.json_to_sheet(records.value); 	// 将JSON数据，生成单元格数据
-  let workBook = XLSX.utils.book_new();		// 创建excel容器
-// 设置单元格标题
+// 导出excel回调
+const ExportExcel = () => {
+  let worksheet = XLSX.utils.json_to_sheet(records.value); // 将JSON数据，生成单元格数据
+  let workBook = XLSX.utils.book_new(); // 创建excel容器
+  // 设置单元格标题
   XLSX.utils.sheet_add_aoa(worksheet, [["序号", "品牌名称", "品牌LOGO"]], {
     origin: "A1",
   });
-// 将数据追加到excel容器中准备导出
+  // 将数据追加到excel容器中准备导出
   XLSX.utils.book_append_sheet(workBook, worksheet);
-// 导出excel
+  // 导出excel
   XLSX.writeFile(workBook, "aaa.xlsx");
-}
+};
 
-// 添加品牌的回调
-const AddTrademark = () => {
-  dialogFormVisible.value = true;
-  addSearchParams.tmName = '';
-  addSearchParams.logoUrl = '';
-  addSearchParams.id = '';
-  nextTick(() => {
-  formRef.value.clearValidate('tmName');
-  formRef.value.clearValidate('logoUrl');
-  })
-}
-
-// 用户头像上传成功的回调
-let handleAvatarSuccess = (response: any) => {
+// 图片上传成功的回调 
+const handleAvatarSuccess = (response: any) => {
   addSearchParams.logoUrl = response.data;
+  ElMessage.success('上传成功');
 }
 
-// 用户头像上传之前的回调
-const beforeAvatarUpload = (rawFile: any) => {
-  if(rawFile.type == 'image/gif' || rawFile.type == 'image/png' || rawFile.type == 'image/jpg' || rawFile.type == 'image/jpeg') {
-    if(rawFile.size / 1024 / 1024 < 5) {
+// 图片上传之前的回调
+const beforeAvatarUpload = (readFile: any) => {
+  if(readFile.type == 'image/gif' || readFile.type == 'image/jpg' || readFile.type == 'image/jpeg' || readFile.type == 'image/png') {
+    if(readFile.size / 1024 / 1024 < 5) {
       ElMessage.success('成功');
       return true;
     }else {
@@ -182,25 +173,34 @@ const beforeAvatarUpload = (rawFile: any) => {
   }
 }
 
-// 品牌名称校验回调
-const validatorName = (rule: any, value: any, callBack: any) => {
-  console.log(rule);
-  
-  console.log(value);
-  
-  if(value.length >= 2) {
-    callBack();
-  }else {
-    callBack(new Error('名字长度必须大于2'))
-  }
+// 点击添加品牌的回调
+const add = () => {
+dialogFormVisible.value = true;
+addSearchParams.tmName = '';
+addSearchParams.logoUrl = '';
+addSearchParams.id = '';
+nextTick(() => {
+  formRef.value.clearValidate('tmName');
+  formRef.value.clearValidate('logoUrl');
+})
 }
 
+// 校验品牌名字的回调
+const validatorName = (rule: any, value: any, callBack: any) => {
+if(value.length >= 2) {
+  callBack();
+}else {
+  callBack(new Error('品牌名称长度必须大于2'))
+}
+}
+
+// 校验Logo的回调
 const validatorLogoUrl = (rule: any, value: any, callBack: any) => {
-  if(value) {
-    callBack();
-  }else {
-    callBack(new Error('请上传头像'))
-  }
+if(value) {
+  callBack();
+}else {
+  callBack(new Error('请上传头像'));
+}
 }
 
 // 设置表单校验规则
@@ -213,18 +213,18 @@ let rules = {
   ]
 }
 
-// 点击确定的回调，添加品牌
-const add = async () => {
+// 点击确定的回调
+const AddtradeMark = async () => {
   await formRef.value.validate();
   try {
-   await reqAddTrademark(addSearchParams);
-   ElMessage.success('添加成功');
-   dialogFormVisible.value = false;
-   addSearchParams.id = '';
-   getTradeMarkList();
-  }catch(e) {
-    ElMessage.error('添加失败');
+    await AddTrademark(addSearchParams);
+    ElMessage.success('成功');
+    dialogFormVisible.value = false;
     addSearchParams.id = '';
+    getTradeMarkList();
+  }catch(e) {
+    ElMessage.error('失败');
+    dialogFormVisible.value = false;
   }
 }
 
@@ -237,16 +237,17 @@ addSearchParams.id = row.id;
 nextTick(() => {
   formRef.value.clearValidate('tmName');
   formRef.value.clearValidate('logoUrl');
-  })
+})
 }
 
 // 点击删除的回调
-
-const deleteTrademark = async (id) => {
-  await reqDeleteTrademark(id);
+const deletetrademark = async (id) => {
+  await DeleteTrademark(id);
   ElMessage.success('删除成功');
   getTradeMarkList();
 }
+
+
 
 </script>
 
@@ -256,27 +257,9 @@ const deleteTrademark = async (id) => {
   height: 178px;
   display: block;
 }
-.item {
-  margin-right: 40px;
-  margin-left: 20px;
-}
-
-.el-dropdown {
-  margin-top: 1.1rem;
-}
-
-.el-dialog {
-  margin-top: 100px!important;
-}
-
 </style>
 
 <style>
-
-.el-dialog {
-  margin-top: 80px;
-}
-
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
@@ -296,5 +279,8 @@ const deleteTrademark = async (id) => {
   width: 178px;
   height: 178px;
   text-align: center;
+}
+.el-dialog {
+  margin-top: 80px;
 }
 </style>

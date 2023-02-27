@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import type { loginData, loginResponseData, userInfoResponseData } from '../api/acl/model/user';
 //引入请求函数
-import { reqLogin, reqGetInfo, reqLogout } from "@/api/acl";
+import { reqLogin, reqUserInfo, reqLogout } from "@/api/acl";
 //引入持久化存储token方法
 import { setToken, getToken, removeToken } from "@/utils/token-utils";
 //仓库存储全部路由,因为左侧菜单组件需要这个数组
@@ -35,7 +35,7 @@ export const useUserInfoStore = defineStore('userInfo', {
     //全局守卫:在调用获取用户信息
     async getInfo() {
       //获取用户信息:请求拦截器携带token公共参数
-      let result: userInfoResponseData = await reqGetInfo();
+      let result: userInfoResponseData = await reqUserInfo();
       //用户信息包含:用户名字、用户头像、按钮权限数组、当前用户路由权限数组、账号职位数组
       this.name = result.name;
       this.avatar = result.avatar;
