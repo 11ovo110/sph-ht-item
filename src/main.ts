@@ -23,5 +23,5 @@ ElSvg(app)
 import './permission'
 import Category from './components/Category/index.vue';
 
-app.component('Category', Category);
+app.component('Category' ,Category);
 app.use(pinia).use(router).use(ElementPlus, {locale: zhCn}).mount('#app')
