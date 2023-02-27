@@ -1,21 +1,23 @@
-import request from "@/utils/request";
-import type { trademark, responseTrademarkData  } from "./model/index";
+//引入二次封装的axios
+import request from '@/utils/request';
 
+//枚举接口地址
 enum API {
-  TradeMark = '/admin/product/baseTrademark/',
-  AddTradeMark = '/admin/product/baseTrademark/save',
-  UpdateTradeMark = '/admin/product/baseTrademark/update',
-  DeleteTradeMark = '/admin/product/baseTrademark/remove'
+    //获取已有品牌的数据
+    getTrademarkList="/admin/product/baseTrademark/",
+    addTrademark = '/admin/product/baseTrademark/save',
+    updateTrademark = '/admin/product/baseTrademark/update',
+    deleTrademark = '/admin/product/baseTrademark/remove/'
+}
+//获取已有品牌的数据
+export const reqTrademarkList = (page:number,limit:number)=>request.get(API.getTrademarkList+`${page}/${limit}`)
+
+export const reqAddTrademark = (data: any) => {
+    if(data.id) {
+        request.put(API.updateTrademark, data);
+    }else {
+        request.post(API.addTrademark, data);
+    }
 }
 
-export const reqTradeMark = (page: string, limit: string) => request.get<any, responseTrademarkData>(API.TradeMark + `${page}/${limit}`);
-
-export const reqAddTradeMark = (data: trademark) => {
-  if(data.id) {
-    return request.put<any, any>(API.UpdateTradeMark, data);
-  }else {
-    return request.post<any, any>(API.AddTradeMark, data);
-  }
-}
-
-export const reqDeleteTradeMark = (id: string) => request.delete<any, any>(API.DeleteTradeMark + `/${id}`);
+export const reqDeleteTrademark = (id: any) => request.delete(API.deleTrademark + id)
