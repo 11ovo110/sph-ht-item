@@ -40,11 +40,11 @@
         @current-change="getTradeMark"
       />
       <el-dialog v-model="dialogFormVisible" :title="addSearchParams.id ? '修改品牌' : '添加品牌'">
-        <el-form label-width="100px">
-          <el-form-item label="品牌名称">
+        <el-form label-width="100px" :model="addSearchParams" :rules="rules" ref="formRef">
+          <el-form-item label="品牌名称" prop="tmName">
             <el-input placeholder="请输入品牌名称" v-model="addSearchParams.tmName"/>
           </el-form-item>
-          <el-form-item label="品牌LOGO">
+          <el-form-item label="品牌LOGO" prop="logoUrl">
             <el-upload
               class="avatar-uploader"
               action="/app-dev/admin/product/fileUpload"
@@ -76,12 +76,16 @@ import { onMounted, reactive, ref } from "vue";
 import { reqAddTradeMark, reqTradeMark, reqDeleteTradeMark } from "@/api/product/trademark";
 import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
+import { nextTick } from "process";
 
-let limit = ref(3);
-let current = ref(1);
-let record = ref([]);
-let total = ref(0);
+let limit = ref(3);         // 设置每页的数量
+let current = ref(1);       // 设置当前的页数
+let record = ref([]);       // 当前页数的数据
+let total = ref(0);        // 数据总条数
+// 设置表单的显示与隐藏
 let dialogFormVisible = ref(false);
+// 获取form实例
+let formRef = ref();
 
 // 收集表单数据
 let addSearchParams: any = reactive({
@@ -98,6 +102,7 @@ let getTradeMark = async () => {
 
 // 添加 | 修改请求的回调
 let add = async () => {
+  await formRef.value.validate();
   try {
     await reqAddTradeMark(addSearchParams);
     dialogFormVisible.value = false;
@@ -111,6 +116,7 @@ let add = async () => {
   }
 }
 
+// 处理删除品牌数据的回调
 let DeleteTradeMark = async (row: any) => {
   if(confirm(`你确定要删除${row.tmName}吗`)) {
     try {
@@ -137,6 +143,12 @@ const addTrademark = () => {
   addSearchParams.tmName = '';
   addSearchParams.logoUrl = '';
   addSearchParams.id = '';
+  
+  // 因为form使用 v-if 来隐藏的，点击时，dom还没渲染完，无法直接拿到 form 的实例
+  nextTick(() => {
+  formRef.value.clearValidate('tmName');
+  formRef.value.clearValidate('logoUrl');
+  })
 }
 
 // 导出excel回调
@@ -173,6 +185,35 @@ const beforeAvatarUpload = (rawFile: any) => {
 // 图片上传成功的回调，获取图片在服务器的地址
 const handleAvatarSuccess = (response: any) => {
   addSearchParams.logoUrl = response.data;
+  formRef.value.clearValidate('logoUrl');
+}
+
+// 校验品牌名称的回调
+const validatorName = (rule: any, value: any, callBack: any) => {
+  if(value.length > 2) {
+    callBack();
+  }else {
+    callBack(new Error('品牌名称的长度必须大于2'))
+  }
+}
+
+// 校验品牌Logo的回调
+const validatorLogoUrl = (rule: any, value: any, callBack: any) => {
+  if(value) {
+    callBack();
+  }else {
+    callBack(new Error('请上传图片'))
+  }
+}
+
+// 自定义表单规则
+let rules = {
+  tmName: [
+    {required: true, validator: validatorName, trigger: 'blur'}
+  ],
+  logoUrl: [
+    {required: true, validator: validatorLogoUrl, trigger: 'blur'}
+  ]
 }
 
 // OnMounted钩子函数，页面渲染完毕立即执行获取品牌数据的钩子
