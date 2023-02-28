@@ -27,19 +27,16 @@ import { useCategoryStore } from "@/stores/category";
 let categoryStore = useCategoryStore();
 
 defineProps(['flag']);
-let city = ref('1');
 
 onMounted(() => {
   categoryStore.getCategory1();
 })
 
-let c1Handler = () => {
+const c1Handler = () => {
   categoryStore.getCategory2();
 }
 
-let c2Handler = () => {
-  console.log(111);
-  
+const c2Handler = () => {
   categoryStore.getCategory3();
 }
 
