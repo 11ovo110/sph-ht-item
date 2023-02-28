@@ -1,14 +1,15 @@
 <template>
-  <Category></Category>
+  <Category :flag="flag"></Category>
   <el-card style="margin-top: 20px">
-    <el-button type="primary" :disabled="CategoryStore.c3Id ? false : true">添加平台属性</el-button>
+    <div v-show="!flag">
+      <el-button type="primary" :disabled="CategoryStore.c3Id ? false : true" @click="add">添加平台属性</el-button>
     <el-form style="margin-top: 20px">
       <el-table :data="attrArr" style="width: 100%" border v-if="attrArr.length">
-        <el-table-column type="index" label="序号" width="80" />
+        <el-table-column type="index" label="序号" width="80" align="center" />
         <el-table-column prop="attrName" label="属性名称" width="100" />
         <el-table-column label="属性值名称">
           <template #="{row, $index}">
-              <el-tag v-for="value in row.attrValueList" :type="colorArr[Math.floor(Math.random() * 3 + 1)]" :key="value.id" style="margin: 0 5px">{{ value.valueName }}</el-tag>
+              <el-tag v-for="value in row.attrValueList" :type="value.id % 2 ? 'success' : 'info'" :key="value.id" style="margin: 0 5px">{{ value.valueName }}</el-tag>
           </template>
         </el-table-column>>
         <el-table-column label="操作" width="200">
@@ -20,6 +21,23 @@
       </el-table>
       <el-empty description="网络异常" v-else></el-empty>
     </el-form>
+    </div>
+    <div v-show="flag == 1">
+      <el-form>
+        <el-form-item label="属性名称">
+          <el-input placeholder="请您输入属性的名字"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" :icon="Plus">添加属性值</el-button>
+      <el-button @click="cancel">取消</el-button>
+      <el-table border style="margin: 20px 0">
+        <el-table-column width="80" type="index" label="序号" align="center"></el-table-column>
+        <el-table-column label="属性值"></el-table-column>
+        <el-table-column label="操作"></el-table-column>
+      </el-table>
+      <el-button type="primary">保存</el-button>
+      <el-button @click="cancel">取消</el-button>
+    </div>
   </el-card>
 </template>
 
@@ -28,14 +46,15 @@ import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/category";
 import {ref, watch} from 'vue';
 import { reqAttrInfo } from "@/api/product/attr";
-import { Delete, Edit } from "@element-plus/icons-vue";
+import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 
 let CategoryStore = useCategoryStore();
 
 let attrArr: any = ref([]);
-let colorArr = ['success', 'info', 'primary', 'danger', 'warning'];
+let flag = ref(0);
 
 
+// 监听三级标题的变化，发送请求获取数据
 watch(() => CategoryStore.c3Id, async () => {
   attrArr.value = [];
   if(!CategoryStore.c3Id) return;
@@ -43,6 +62,16 @@ watch(() => CategoryStore.c3Id, async () => {
   let result = await reqAttrInfo(c1Id, c2Id, c3Id);
   attrArr.value = result;
 })
+
+// 点击取消的回调
+const cancel = () => {
+  flag.value = 0;
+}
+
+// 点击添加属性值的回调
+const add = () => {
+  flag.value = 1;
+}
 
 </script>
 
