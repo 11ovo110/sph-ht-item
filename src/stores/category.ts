@@ -16,13 +16,15 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.c1Arr = result;
     },
     async getCategory2() {
+      this.c2Id = '';
+      this.c3Id = '';
+      this.c3Arr = [];
       let result = await reqCategory2(this.c1Id);
       this.c2Arr = result;
     },
     async getCategory3() {
+      this.c3Id = '';
       let result = await reqCategory3(this.c2Id);
-      console.log(result);
-      
       this.c3Arr = result;
     }
   }
