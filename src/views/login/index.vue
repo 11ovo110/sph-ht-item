@@ -1,171 +1,132 @@
 <template>
   <div class="login-container">
-    <!-- 
-       el-form:表单组件
-           属性:ref获取表单组件实例
-           model:告诉表单组件,数据收集到那个对象(代理对象)的身上
-           rule:表单校验规则
-       el-form-item:表单项一起使用
-      -->
-    <el-form
-      ref="formRef"
-      :model="loginForm"
-      :rules="loginRules"
-      class="login-form"
-      auto-complete="on"
-      label-position="left"
-    >
-      <!-- 登录标题 -->
+    <el-form ref="formRef" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
         <h3 class="title">尚品汇后台管理</h3>
       </div>
       <el-form-item prop="username">
-        <!-- 小图标全局组件 -->
+        <!--  avatar 图标组件 -->
         <span class="svg-container">
           <svg-icon name="ele-UserFilled" />
         </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="请你输入账号"
-        />
+        <!-- 用户名文本框 -->
+        <el-input ref="username" v-model="loginForm.username" placeholder="Username" name="username" type="text" tabindex="1" auto-complete="on" />
       </el-form-item>
       <el-form-item prop="password">
-        <!-- 前面锁头小图标 -->
+        <!-- 小锁图标组件 -->
         <span class="svg-container">
           <svg-icon name="ele-Lock" />
         </span>
-        <!-- 密码 -->
-        <el-input
-          :key="passwordType"
-          ref="passwordRef"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="请你输入密码"
-          @keyup.enter="handleLogin"
-        />
-        <!-- 小眼睛 -->
+         <!-- 密码文本框，动态绑定type样式，绑定点击enter触发登录 -->
+        <el-input :key="passwordType" ref="passwordRef" v-model="loginForm.password" :type="passwordType" placeholder="Password" name="password" tabindex="2" auto-complete="on" @keyup.enter="handleLogin" />
+        <!-- 点击小眼睛，改变密码文本框的样式 -->
         <span class="show-pwd" @click="showPwd">
-          <svg-icon
-            :name="passwordType === 'password' ? 'ele-Hide' : 'ele-View'"
-          />
+          <!-- 判断文本框类型，改变小眼镜的样式 -->
+          <svg-icon :name="passwordType === 'password' ? 'ele-Hide' : 'ele-View'" />
         </span>
       </el-form-item>
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width: 100%; margin-bottom: 30px; height: 40px"
-        @click.prevent="handleLogin"
-        >登 陆</el-button
-      >
+      <!-- 登录按钮，点击进行登录逻辑，小圈圈加载效果 -->
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;height: 40px;" @click.prevent="handleLogin">登 陆</el-button>
     </el-form>
   </div>
 </template>
-<script lang="ts" setup>
-//用户登录相关的小仓库
-import { useUserInfoStore } from "@/stores/userInfo";
-import type { FormInstance } from "element-plus";
-import { nextTick, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-//获取用户小仓库
-const userInfoStore = useUserInfoStore();
-//获取路由对象
-const route = useRoute();
-//获取路由器对象
-const router = useRouter();
-//获取el-form组件实例的VC,调用validate方法确保校验通过
-const formRef = ref<FormInstance>();
-//控制按钮的加载效果:默认没有
-const loading = ref(false);
-//获取密码的组件实例
-const passwordRef = ref<HTMLInputElement>();
-//收集登录页面:账号与密码的响应式数据
-const loginForm = ref({
-  username: "admin",
-  password: "111111",
-});
-//密码的文本框类型:默认密码类型带小点点
-const passwordType = ref("password");
 
-//点击密码后面小眼睛:切换密码表单类型,小眼睛来回切换
+<script lang="ts">
+export default {
+  name: 'Login'
+}
+</script>
+
+<script lang="ts" setup>
+// 引入 userinfo 小仓库函数
+import { useUserInfoStore } from '@/stores/userInfo'
+// 引入 element-plus 中的 ts 类型判断
+import type { FormInstance } from 'element-plus'
+import { nextTick, ref, watch } from 'vue'
+// 引入 路由 和 路由器
+import { useRoute, useRouter } from 'vue-router'
+
+// 获取小仓库
+const userInfoStore = useUserInfoStore()
+// 获取路由
+const route = useRoute()
+// 获取路由器
+const router = useRouter()
+// 双向数据绑定账号与密码
+const loginForm = ref({
+  username: 'admin',
+  password: '111111'
+})
+// 初始的小圈圈默认不加载
+const loading = ref(false)
+// 密码框的初识样式，为点点点
+const passwordType = ref('password')
+// 初始的query跳转参数
+const redirect = ref('')
+// 获取密码框的组件
+const passwordRef = ref<HTMLInputElement>()
+// 获取表单组件
+const formRef = ref<FormInstance>()
+
+// 账号校验函数
+const validateUsername = (rule: any, value: any, callback: any) => {
+  if (value.length < 4) {
+    callback(new Error('用户名长度不能小于4位'))
+  } else {
+    callback()
+  }
+}
+// 密码校验函数
+const validatePassword = (rule: any, value: any, callback: any) => {
+  if (value.length < 6) {
+    callback(new Error('密码长度不能小于6位'))
+  } else {
+    callback()
+  }
+}
+// 登录校验规则
+const loginRules = {
+  username: [{ required: true, validator: validateUsername }],
+  password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+}
+
+// 监视route路由的变化，立即执行一次，如果有query（想去没去时添加的），就添加给 redirect
+watch(
+  route,
+  () => {
+    redirect.value = route.query && (route.query.redirect as string)
+  },
+  { immediate: true }
+)
+
 /* 
 切换密码的显示/隐藏
 */
 const showPwd = () => {
-  //无非passwrodType来回切换
-  passwordType.value = passwordType.value === "password" ? "text" : "password";
-  //nextTick:当响应式数据发生变化的时候,获取更新后DOM
+  if (passwordType.value === 'password') {
+    passwordType.value = 'text'
+  } else {
+    passwordType.value = 'password'
+  }
   nextTick(() => {
-    //密码表单元素聚焦
-    passwordRef.value?.focus();
-  });
-};
-
-//存储login登录query参数
-const redirect = ref("");
-
-//自定义校验规则:用户名字规则---->只要文本发生变化就会触发次函数
-const validateUsername = (rule: any, value: any, callback: any) => {
-  //账号长度小于4位
-  if (value.length < 4) {
-    callback(new Error("用户名长度不能小于4位"));
-  } else {
-    //账号长度大于四位正常放行
-    callback();
-  }
-};
-//自定义校验规则:密码的规则
-const validatePassword = (rule: any, value: any, callback: any) => {
-  if (value.length < 6) {
-    callback(new Error("密码长度不能小于6位"));
-  } else {
-    callback();
-  }
-};
-
-//表单元素校验规则
-const loginRules = {
-  //校验用户名:required,必须校验字段  validator:自定义校验规则
-  username: [
-    { required: true, validator: validateUsername, trigger: "change" },
-  ],
-  //校验密码:trigger,触发校验时机
-  password: [
-    { required: true, trigger: "change", validator: validatePassword },
-  ],
-};
-
-//监听路由对象(上来立即监听一次)
-watch(
-  route,
-  () => {
-    //判断是否有query参数,如果有query参数。把他赋值给rediret这个ref对象
-    redirect.value = route.query && (route.query.redirect as string);
-  },
-  { immediate: true }
-);
+    passwordRef.value?.focus()
+  })
+}
 
 /* 
 点击登陆的回调
 */
 const handleLogin = async () => {
-  //点击登录按钮,看表单元素每一项目是否校验通过
-  await formRef.value?.validate();
-  //按钮加载效果开始动
-  loading.value = true;
-  //登录需要的账号与密码的参数
-  const { username, password } = loginForm.value;
-  //前台项目:vuex->小仓库(action)
-  //后台项目:pinia->获取小仓局,调用它的actions的方法,去发请求
+  await formRef.value?.validate()
+  loading.value = true
+  const { username, password } = loginForm.value
   try {
-    //调用用户相关的小仓库login方法->进行登录请求
-    await userInfoStore.login(username, password);
-    router.push({ path: redirect.value || "/" });
+    await userInfoStore.login(username, password)
+    router.push({ path: redirect.value || '/' })
   } finally {
-    //登录成功、还是失败,小加载消失
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style lang="scss">

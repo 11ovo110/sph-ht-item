@@ -14,8 +14,8 @@ import type { RouteRecordRaw } from 'vue-router';
  */
 
 //login|404
-export const staticRoutes: Array<RouteRecordRaw> = [
-  {
+ export const staticRoutes: Array<RouteRecordRaw> = [
+	{
     path: '/login',//路由路径
     name: 'Login',//命名路由
     component: () => import('@/views/login/index.vue'),//加载路由组件
@@ -40,68 +40,68 @@ export const staticRoutes: Array<RouteRecordRaw> = [
       path: 'home',//首页二级路由
       name: 'Home',//命名路由
       component: () => import('@/views/home/index.vue'),//路由懒加载
-      meta: {
+      meta: { 
         title: '首页',//决定次路由在菜单与导航显示文字 
-        icon: 'ele-ChromeFilled',//决定次路由组件在左侧菜单展示图标 [element-plus里面图标]
-        hidden: false//能决定次路由在左侧菜单是都显示
+        icon: 'ele-Eleme',//决定次路由组件在左侧菜单展示图标 [element-plus里面图标]
+        hidden:false//能决定次路由在左侧菜单是都显示
       }
     }]
   },
   {
-    path: "/product",//路径
-    component: () => import('@/layout/index.vue'),//人家提供的layout结构
-    name: 'Product',
-    meta: {//路由元信息
-      title: '商品管理',
-      icon: 'ele-Goods'
+    path: '/product',
+    name: 'Produce',
+    component: () => import('@/layout/index.vue'),
+    meta: {
+      title: '商品管理',                                                
+      icon: 'ele-ShoppingBag'
     },
-    redirect:'/product/trademark',
+    redirect: '/product/trademark',
     children: [
       {
         path: 'trademark',
-        component: () => import('@/views/product/trademark/index.vue'),
-        name: "Trademark",
+        name: 'Trademark',
+        component: () => import('@/views/product/trademark/trademark.vue'),
         meta: {
           title: '品牌管理',
-          icon: 'ele-SwitchFilled'
+          icon: 'ele-Present',
         }
       },
       {
         path: 'attr',
-        component: () => import('@/views/product/attr/index.vue'),
-        name: "Attr",
+        name: 'Attr',
+        component: () => import('@/views/product/attr/attr.vue'),
         meta: {
           title: '平台属性管理',
-          icon: 'ele-ElementPlus'
+          icon: 'ele-CollectionTag',
         }
       },
       {
         path: 'spu',
-        component: () => import('@/views/product/spu/index.vue'),
-        name: "Spu",
+        name: 'Spu',
+        component: () => import('@/views/product/spu/spu.vue'),
         meta: {
           title: 'spu管理',
-          icon: 'ele-Lollipop'
+          icon: 'ele-Ship',
         }
       },
       {
         path: 'sku',
-        component: () => import('@/views/product/sku/index.vue'),
-        name: "Sku",
+        name: 'Sku',
+        component: () => import('@/views/product/sku/sku.vue'),
         meta: {
           title: 'sku管理',
-          icon: 'ele-Operation'
+          icon: 'ele-WindPower',
         }
       }
     ]
   },
   /* 匹配任意的路由 必须最后注册 */
-  {
-    path: '/:pathMatch(.*)',
+  { 
+    path: '/:pathMatch(.*)', 
     name: 'Any',
-    redirect: '/404',
+    redirect: '/404', 
     meta: {
-      hidden: true
+      hidden: true 
     }
   }
 ];
