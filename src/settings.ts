@@ -6,7 +6,7 @@ export default {
   /* 
   主界面左侧Logo标题
   */
-  title: '硅谷滴滴',
+  title: '硅谷后台管理系统',
 
   /* 
   是否固定主界面的Header部分

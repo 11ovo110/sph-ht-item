@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 import { reqCategory1, reqCategory2, reqCategory3 } from "@/api/product/attr";
 
-export const useCategoryStore = defineStore('categoryStore', {
+export const useAttrStore = defineStore('attrStore', {
   state: (): any => ({
-  c1Arr: [],
-  c1Id: '',
-  c2Arr: [],
-  c2Id: '',
-  c3Arr: [],
-  c3Id: ''
+    c1Id: '',
+    c1Arr: [],
+    c2Id: '',
+    c2Arr: [],
+    c3Id: '',
+    c3Arr: [],
   }),
   actions: {
     async getCategory1() {
@@ -26,6 +26,6 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.c3Id = '';
       let result = await reqCategory3(this.c2Id);
       this.c3Arr = result;
-    }
+    },
   }
 })

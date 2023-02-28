@@ -17,13 +17,11 @@ import router from './router'
 import './styles/index.scss'
 //引入ELSvg函数
 import ElSvg from './components/SvgIcon/ElSvg'
-//引入全局组件 category
-import Category from './components/Category/index.vue';
 //函数调用传递app
 ElSvg(app)
 
 import './permission'
+import Category from './components/Category/index.vue';
 
+app.component('Category' ,Category);
 app.use(pinia).use(router).use(ElementPlus, {locale: zhCn}).mount('#app')
-
-app.component('Category', Category);
