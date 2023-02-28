@@ -1,9 +1,13 @@
 <template>
-  <div>SPU品牌管理</div>
+  <div>
+    spu
+  </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
+
 </script>
 
 <style scoped>
+
 </style>
