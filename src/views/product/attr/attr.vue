@@ -60,8 +60,8 @@
         ></el-table-column>
         <el-table-column label="属性值">
           <template #="{ row, $index }">
-            <el-input v-model="row.valueName" v-show="row.flag" @blur="InputOnBlur(row, $index)"></el-input>
-            <div v-show="!row.flag" @click="clickDiv(row)">{{ row.valueName }}</div>
+            <el-input v-model="row.valueName" :ref="(el) => inputRef[$index] = el" v-show="row.flag" @blur="InputOnBlur(row, $index)"></el-input>
+            <div v-show="!row.flag" @click="clickDiv(row, $index)">{{ row.valueName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -82,7 +82,7 @@
 import Category from "@/components/Category/index.vue";
 // 导入仓库
 import { useCategoryStore } from "@/stores/category";
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch, nextTick } from "vue";
 // 导入请求函数
 import { reqAddattrOrUpdateAttr, reqAttrInfo } from "@/api/product/attr";
 // 导入element-plus图标
@@ -96,6 +96,7 @@ let CategoryStore = useCategoryStore();
 let attrArr: any = ref([]);
 // 定义控制跳转的参数
 let flag = ref(0);
+let inputRef: any = ref([]);
 
 // 定义获取表单数据
 let addSearchParams: any = ref({
@@ -132,6 +133,9 @@ let addValue = () => {
   addSearchParams.value.attrValueList.push({
     valueName: '',
     flag: true
+  })
+  nextTick(() => {
+    inputRef.value[inputRef.value.length - 1].focus();
   })
 }
 
@@ -185,8 +189,11 @@ const InputOnBlur = (row: any, index: any) => {
 }
 
 // 点击div的回调，显示input输入框
-const clickDiv = (row: any) => {
+const clickDiv = (row: any, index: any) => {
   row.flag = true;
+  nextTick(() => {
+    inputRef.value[index].focus();
+  })
 }
 
 
