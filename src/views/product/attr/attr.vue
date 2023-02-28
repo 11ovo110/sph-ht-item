@@ -60,7 +60,8 @@
         ></el-table-column>
         <el-table-column label="属性值">
           <template #="{ row, $index }">
-            <el-input v-model="row.valueName"></el-input>
+            <el-input v-model="row.valueName" v-show="row.flag" @blur="InputOnBlur(row, $index)"></el-input>
+            <div v-show="!row.flag" @click="clickDiv(row)">{{ row.valueName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -77,16 +78,23 @@
 </template>
 
 <script setup lang='ts'>
+// 导入全局组件（分类组件）
 import Category from "@/components/Category/index.vue";
+// 导入仓库
 import { useCategoryStore } from "@/stores/category";
 import { reactive, ref, watch } from "vue";
+// 导入请求函数
 import { reqAddattrOrUpdateAttr, reqAttrInfo } from "@/api/product/attr";
+// 导入element-plus图标
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
+// 弹出提示框
 import { ElMessage } from "element-plus";
 
+// 获取小仓库
 let CategoryStore = useCategoryStore();
-
+// 定义获取数据的数组
 let attrArr: any = ref([]);
+// 定义控制跳转的参数
 let flag = ref(0);
 
 // 定义获取表单数据
@@ -122,7 +130,8 @@ const cancel = () => {
 // 点击添加属性值的回调
 let addValue = () => {
   addSearchParams.value.attrValueList.push({
-    valueName: ''
+    valueName: '',
+    flag: true
   })
 }
 
@@ -149,6 +158,35 @@ const save = async () => {
       ElMessage.error('添加失败');
     }
   }
+}
+
+// input框失去焦点
+const InputOnBlur = (row: any, index: any) => {
+  // 判断输入框是否为空
+  if(!row.valueName.trim()) {
+    // 删除为空的属性
+    addSearchParams.value.attrValueList.splice(index, 1);
+    ElMessage.error('属性名不能为空')
+  }else {
+    // 判断是否有重复值
+   let repeat =  addSearchParams.value.attrValueList.find(item => {
+      if(row != item) {
+        return item.valueName == row.valueName;
+      }
+    })
+    if(repeat) {
+      // 删除重复值
+      addSearchParams.value.attrValueList.splice(index, 1);
+      ElMessage.error('属性名重复')
+    }else {
+      row.flag = false;
+    }
+  }
+}
+
+// 点击div的回调，显示input输入框
+const clickDiv = (row: any) => {
+  row.flag = true;
 }
 
 
