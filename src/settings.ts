@@ -6,7 +6,7 @@ export default {
   /* 
   主界面左侧Logo标题
   */
-  title: 'kiteStore',
+  title: '硅谷滴滴',
 
   /* 
   是否固定主界面的Header部分

@@ -1,25 +1,16 @@
 import request from "@/utils/request";
 
 enum API {
-  getSpuData = '/admin/product/',
-  getTrademarkList = '/admin/product/baseTrademark/getTrademarkList',
-  getSpuImage = '/admin/product/spuImageList/',
-  getSaleAttr = '/admin/product/spuSaleAttrList/',
-  getAllAttr = '/admin/product/baseSaleAttrList'
+  getAttrInfo = '/admin/product/',
+  AllattrList = '/admin/product/baseSaleAttrList',
+  imgList = '/admin/product/spuImageList/',
+  OwnattrList = '/admin/product/spuSaleAttrList/',
+  AllTrademark = '/admin/product/baseTrademark/getTrademarkList'
 }
 
-export const reqgetSPUDate = (page: number, limit: number, category3Id: number | string) => request.get(API.getSpuData + `${page}/${limit}?category3Id=${category3Id}`); 
+export const reqgetAttrInfo = (page: number, limit: number, c3Id: number | string) => request.get(API.getAttrInfo + `${page}/${limit}?category3Id=${c3Id}`);
 
-// 获取所有品牌的请求
-export const reqgetTrademarkList = () => request.get(API.getTrademarkList);
-
-// 获取某一个照片墙的接口
-export const reqgetSpuImageList = (spuId: any) => request.get(API.getSpuImage + spuId);
-
-// 获取某一个已有的SPU销售属性的接口
-export const reqgetSaleAttr = (spuId: any) => request.get(API.getSaleAttr + spuId);
-
-// 获取所有的销售属性
-export const reqgetAllAttr = () => request.get(API.getAllAttr);
-
-
+export const reqAllattrList = () => request.get(API.AllattrList);
+export const reqAllTrademark = () => request.get(API.AllTrademark);
+export const reqOwnattrList = (spuId: number | string) => request.get(API.OwnattrList + spuId);
+export const reqimgList = (spuId: number | string) => request.get(API.imgList + spuId);

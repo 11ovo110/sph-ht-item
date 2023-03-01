@@ -8,8 +8,10 @@
         @click="add"
         >添加平台属性</el-button
       >
-        <el-table style="margin-top: 20px"
+      <el-form style="margin-top: 20px">
+        <el-table
           :data="attrArr"
+          style="width: 100%"
           border
           v-if="attrArr.length"
         >
@@ -33,16 +35,13 @@
           >>
           <el-table-column label="操作" width="200">
             <template #="{ row, $index }">
-              <el-button type="warning" size="small" :icon="Edit" @click="EditAttr(row)"></el-button>
-              <el-popconfirm :title="`你确定删除${row.attrName}吗?`" @confirm="removeAttr(row.id)">
-                <template #reference>
-                  <el-button type="danger" size="small" :icon="Delete"></el-button>
-                </template>
-              </el-popconfirm>
+              <el-button type="warning" size="small" :icon="Edit" @click="updateAttr(row)"></el-button>
+              <el-button type="danger" size="small" :icon="Delete" @click="DeleteAttr(row)"></el-button>
             </template>
           </el-table-column>
         </el-table>
         <el-empty description="网络异常" v-else></el-empty>
+      </el-form>
     </div>
     <div v-show="flag == 1">
       <el-form>
@@ -67,7 +66,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template #="{ row, $index }">
-            <el-button type="danger" :icon="Delete" @click="addSearchParams.attrValueList.splice($index, 1)"></el-button>
+            <el-button type="warning" :icon="Edit"></el-button>
+            <el-button type="danger" :icon="Delete"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -80,17 +80,16 @@
 <script setup lang='ts'>
 // 导入全局组件（分类组件）
 import Category from "@/components/Category/index.vue";
-// 引入深拷贝函数
-import  cloneDeep  from "lodash/cloneDeep";
 // 导入仓库
 import { useCategoryStore } from "@/stores/category";
-import { reactive, ref, watch, nextTick, onUnmounted } from "vue";
+import { reactive, ref, watch, nextTick } from "vue";
 // 导入请求函数
-import { reqAddattrOrUpdateAttr, reqAttrInfo, reqDeleteAttr } from "@/api/product/attr";
+import { reqAddattrOrUpdateAttr, reqAttrInfo } from "@/api/product/attr";
 // 导入element-plus图标
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 // 弹出提示框
 import { ElMessage } from "element-plus";
+import cloneDeep from "lodash/cloneDeep";
 
 // 获取小仓库
 let CategoryStore = useCategoryStore();
@@ -158,7 +157,6 @@ const save = async () => {
     try {
       await reqAddattrOrUpdateAttr(addSearchParams.value);
     ElMessage.success(addSearchParams.value.id ? '修改成功' : '添加成功');
-    GetAttrInfo();
     flag.value = 0;
     GetAttrInfo();
     }catch(e) {
@@ -176,7 +174,7 @@ const InputOnBlur = (row: any, index: any) => {
     ElMessage.error('属性名不能为空')
   }else {
     // 判断是否有重复值
-   let repeat =  addSearchParams.value.attrValueList.find((item: { valueName: any; }) => {
+   let repeat =  addSearchParams.value.attrValueList.find(item => {
       if(row != item) {
         return item.valueName == row.valueName;
       }
@@ -199,31 +197,14 @@ const clickDiv = (row: any, index: any) => {
   })
 }
 
-// 点击编辑按钮的回调
-const EditAttr = (row: any) => {
-  addSearchParams.value = cloneDeep(row);
+const updateAttr = async (row: any) => {
   flag.value = 1;
+  addSearchParams.value = cloneDeep(row);
 }
 
-// 点击删除的回调
-const removeAttr = async (id: number | string) => {
-try {
-await reqDeleteAttr(id);
-ElMessage.success('删除成功');
-GetAttrInfo();
-}catch(e) {
-ElMessage.error('删除失败');
-}
-}
+const DeleteAttr = async (row: any) => {
 
-onUnmounted(() => {
-  CategoryStore.c1Id = '';
-  CategoryStore.c1Attr = [];
-  CategoryStore.c2Id = '';
-  CategoryStore.c2Attr = [];
-  CategoryStore.c3Id = '';
-  CategoryStore.c3Attr = [];
-})
+}
 
 
 </script>
