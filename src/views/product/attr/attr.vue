@@ -176,7 +176,7 @@ const InputOnBlur = (row: any, index: any) => {
     ElMessage.error('属性名不能为空')
   }else {
     // 判断是否有重复值
-   let repeat =  addSearchParams.value.attrValueList.find(item => {
+   let repeat =  addSearchParams.value.attrValueList.find((item: { valueName: any; }) => {
       if(row != item) {
         return item.valueName == row.valueName;
       }
