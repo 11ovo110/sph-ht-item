@@ -1,20 +1,20 @@
 <template>
-  <Category :flag="flag"></Category>
-  <el-card style="margin-top: 20px">
+  <Category :flag = flag></Category>
+  <el-card style="margin-top: 10px">
     <div v-show="!flag">
-      <el-button type="primary" :icon="Plus" @click="addSpu" :disabled="records.length ? false : true">添加SPU</el-button>
-    <el-table border :data="records" style="margin: 20px 0">
-      <el-table-column label="序号" type="index" width="80" align="center"></el-table-column>
-      <el-table-column label="SPU名称" prop="spuName"></el-table-column>
-      <el-table-column label="SPU描述" prop="description"></el-table-column>
-      <el-table-column label="操作">
-        <template #="{row, $index}">
+      <el-button :icon="Plus" type="primary" :disabled="records.length ? false : true" @click="addSpu">添加SPU</el-button>
+    <el-table style="margin: 10px 0" border :data="records">
+    <el-table-column label="序号" type="index" align="center" width="80"></el-table-column>
+    <el-table-column label="SPU名称" prop="spuName"></el-table-column>
+    <el-table-column label="SPU描述" prop="description"></el-table-column>
+    <el-table-column label="操作">
+      <template #="{row, $index}">
           <el-button type="primary" :icon="Plus"></el-button>
           <el-button type="warning" :icon="Edit" @click="updateAttr(row)"></el-button>
           <el-button type="info" :icon="InfoFilled"></el-button>
           <el-button type="danger" :icon="Delete"></el-button>
-        </template>
-      </el-table-column>
+      </template>
+    </el-table-column>
     </el-table>
     <el-pagination
       v-model:current-page="current"
@@ -27,31 +27,39 @@
       @current-change="getAttrInfo"
     />
     </div>
-    <sku-form v-show="flag == 1" ref="spu" @changeFlag="flag = $event"></sku-form>
+    <spu-form @changeFlag="flag = $event" ref="spu" v-show="flag == 1"></spu-form>
+    
   </el-card>
+ 
 </template>
 
 <script setup lang='ts'>
+import { reqgetAttrInfo } from '@/api/product/spu';
 import { Delete, Edit, InfoFilled, Plus } from '@element-plus/icons-vue';
 import { onUnmounted, ref, watch } from 'vue';
 import { useCategoryStore } from '@/stores/category';
-import { reqgetAttrInfo } from '@/api/product/spu';
-import skuForm from './skuForm.vue';
+import spuForm from './spuForm.vue';
+
 
 let categoryStore = useCategoryStore();
 let current = ref(1);
-let total = ref(0);
 let limit = ref(3);
-let records = ref([]);
+let total : any= ref(0);
+let records: any = ref([]);
 let flag = ref(0);
 let spu = ref();
 
 watch(() => categoryStore.c3Id, () => {
-  records.value = [];
-  if(categoryStore.c3Id) {
-    getAttrInfo();
-  }
+records.value = [];
+if(categoryStore.c3Id) {
+  getAttrInfo();
+}
 })
+
+const sizeHandler = () => {
+  current.value = 1;
+  getAttrInfo();
+}
 
 const getAttrInfo = async () => {
   let result: any = await reqgetAttrInfo(current.value, limit.value, categoryStore.c3Id);
@@ -59,18 +67,13 @@ const getAttrInfo = async () => {
   total.value = result.total;
 }
 
-const sizeHandler = () => {
-  current.value = 1;
-  getAttrInfo();
-}
-
 onUnmounted(() => {
   categoryStore.c1Id = '';
-  categoryStore.c1Arr = '';
+  categoryStore.c1Arr = [];
   categoryStore.c2Id = '';
-  categoryStore.c2Arr = '';
+  categoryStore.c2Arr = [];
   categoryStore.c3Id = '';
-  categoryStore.c3Arr = '';
+  categoryStore.c3Arr = [];
 })
 
 const addSpu = () => {
@@ -78,8 +81,8 @@ const addSpu = () => {
 }
 
 const updateAttr = (row: any) => {
-  flag.value = 1;
-  spu.value.getSpuList(row);
+flag.value = 1;
+spu.value.getSpuList(row);
 }
 
 </script>

@@ -35,9 +35,13 @@
           >>
           <el-table-column label="操作" width="200">
             <template #="{ row, $index }">
-              <el-button type="warning" size="small" :icon="Edit" @click="updateAttr(row)"></el-button>
-              <el-button type="danger" size="small" :icon="Delete" @click="DeleteAttr(row)"></el-button>
-            </template>
+            <el-button type="warning" :icon="Edit" @click="updateAttr(row)"></el-button>
+            <el-popconfirm :title="`你确定删除${row.attrName}吗`" @confirm="deleteAttr(row)">
+              <template #reference>
+                <el-button type="danger" :icon="Delete"></el-button>
+              </template>
+            </el-popconfirm>
+          </template>
           </el-table-column>
         </el-table>
         <el-empty description="网络异常" v-else></el-empty>
@@ -65,9 +69,8 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template #="{ row, $index }">
-            <el-button type="warning" :icon="Edit"></el-button>
-            <el-button type="danger" :icon="Delete"></el-button>
+          <template #="{row, $index}">
+            <el-button :icon="Delete" type="danger" @click="addSearchParams.attrValueList.splice($index, 1)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,9 +85,9 @@
 import Category from "@/components/Category/index.vue";
 // 导入仓库
 import { useCategoryStore } from "@/stores/category";
-import { reactive, ref, watch, nextTick } from "vue";
+import { reactive, ref, watch, nextTick, onUnmounted } from "vue";
 // 导入请求函数
-import { reqAddattrOrUpdateAttr, reqAttrInfo } from "@/api/product/attr";
+import { reqAddattrOrUpdateAttr, reqAttrInfo, reqDeleteAttr } from "@/api/product/attr";
 // 导入element-plus图标
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 // 弹出提示框
@@ -106,6 +109,7 @@ let addSearchParams: any = ref({
   categoryId: '',
   categoryLevel: 3
 });
+
 
 // 监听三级标题的变化，发送请求获取数据
 watch(
@@ -156,11 +160,11 @@ const save = async () => {
   if(addSearchParams.value.attrValueList.length) {
     try {
       await reqAddattrOrUpdateAttr(addSearchParams.value);
-    ElMessage.success(addSearchParams.value.id ? '修改成功' : '添加成功');
+    ElMessage.success('添加成功');
     flag.value = 0;
     GetAttrInfo();
     }catch(e) {
-      ElMessage.error(addSearchParams.value.id ? '修改失败' : '添加失败');
+      ElMessage.error('添加失败');
     }
   }
 }
@@ -174,7 +178,7 @@ const InputOnBlur = (row: any, index: any) => {
     ElMessage.error('属性名不能为空')
   }else {
     // 判断是否有重复值
-   let repeat =  addSearchParams.value.attrValueList.find(item => {
+   let repeat =  addSearchParams.value.attrValueList.find((item: { valueName: any; }) => {
       if(row != item) {
         return item.valueName == row.valueName;
       }
@@ -197,14 +201,25 @@ const clickDiv = (row: any, index: any) => {
   })
 }
 
-const updateAttr = async (row: any) => {
-  flag.value = 1;
-  addSearchParams.value = cloneDeep(row);
+const updateAttr = (row: any) => {
+flag.value = 1;
+addSearchParams.value = cloneDeep(row);
 }
 
-const DeleteAttr = async (row: any) => {
-
+const deleteAttr = async (row: any) => {
+await reqDeleteAttr(row.id);
+ElMessage.success('删除成功');
+GetAttrInfo();
 }
+
+onUnmounted(() => {
+  CategoryStore.c1Id = '';
+  CategoryStore.c1Arr = [];
+  CategoryStore.c2Id = '';
+  CategoryStore.c2Arr = [];
+  CategoryStore.c3Id = '';
+  CategoryStore.c3Arr = [];
+})
 
 
 </script>
