@@ -27,7 +27,7 @@
                 :icon="Plus"
                 @click="addSpu"
               ></el-button>
-              <el-button type="warning" size="small" :icon="Edit"></el-button>
+              <el-button type="warning" size="small" :icon="Edit" @click="updateSPU(row)"></el-button>
               <el-button
                 type="info"
                 size="small"
@@ -48,7 +48,7 @@
           @current-change="getSpuDate"
         />
       </div>
-      <spu-form v-show="flag == 1" @getFlag="flag = $event"></spu-form>
+      <spu-form v-show="flag == 1" @getFlag="flag = $event" ref="spu"></spu-form>
       <sku-form v-show="flag == 2"></sku-form>
     </el-card>
   </div>
@@ -79,6 +79,8 @@ let records = ref([]);
 let total = ref(0);
 // 定义场景切换的变量
 let flag = ref(0);
+// 获取spuForm的实例
+let spu = ref();
 
 // 监听，如果三级Id发生变化就会触发
 watch(
@@ -126,6 +128,13 @@ onUnmounted(() => {
 const addSpu = () => {
   flag.value = 1;
 };
+
+// 点击编辑的回调
+const updateSPU = (row: any) => {
+  flag.value = 1;
+  spu.value.getSpuList(row);
+}
+
 </script>
 
 <style scoped>
