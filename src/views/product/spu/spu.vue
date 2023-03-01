@@ -2,7 +2,7 @@
   <Category :flag="flag"></Category>
   <el-card style="margin-top: 20px">
     <div v-show="!flag">
-      <el-button type="primary" :icon="Plus" @click="addSpu">添加SPU</el-button>
+      <el-button type="primary" :icon="Plus" @click="addSpu" :disabled="records.length ? false : true">添加SPU</el-button>
     <el-table border :data="records" style="margin: 20px 0">
       <el-table-column label="序号" type="index" width="80" align="center"></el-table-column>
       <el-table-column label="SPU名称" prop="spuName"></el-table-column>
