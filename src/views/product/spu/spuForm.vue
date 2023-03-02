@@ -52,6 +52,7 @@
         :icon="Plus"
         style="margin-left: 10px"
         @click="addSaleAttr"
+        :disabled="addAttr ? false : true"
         >添加销售属性</el-button
       >
     </el-form-item>
