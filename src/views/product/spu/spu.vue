@@ -107,16 +107,16 @@ const getSpuDate = async () => {
   total.value = result.total;
 };
 
+const getFlag = (scenes: number) => {
+  flag.value = scenes;
+  getSpuDate();
+}
+
 // 定义分页器limit变化触发的回调
 const sizeHandler = () => {
   current.value = 1;
   getSpuDate();
 };
-
-const getFlag = (scenes: number) => {
-  flag.value = scenes;
-  getSpuDate();
-}
 
 // 组件销毁，清理仓库的数据
 onUnmounted(() => {
@@ -131,7 +131,7 @@ onUnmounted(() => {
 // 点击添加SPU的回调
 const addSpu = () => {
   flag.value = 1;
-  spu.value.AddSpuList(categoryStore.c3Id);
+  spu.value.NewAddSpu(categoryStore.c3Id);
 };
 
 // 点击编辑的回调
