@@ -94,11 +94,6 @@ watch(
   }
 );
 
-const getFlag = (scenes: any) => {
-  flag.value = scenes;
-  getSpuDate();
-}
-
 // 定义获取数据的函数，因为会多次使用，所以独立封装成函数
 const getSpuDate = async () => {
   // 获取数据
@@ -111,6 +106,11 @@ const getSpuDate = async () => {
   // 把回传数据的总条数赋值给total
   total.value = result.total;
 };
+
+const getFlag = (scenes: number) => {
+  flag.value = scenes;
+  getSpuDate();
+}
 
 // 定义分页器limit变化触发的回调
 const sizeHandler = () => {
@@ -131,7 +131,7 @@ onUnmounted(() => {
 // 点击添加SPU的回调
 const addSpu = () => {
   flag.value = 1;
-  spu.value.addNewSpu(categoryStore.c3Id);
+  spu.value.newAddSpu(categoryStore.c3Id);
 };
 
 // 点击编辑的回调

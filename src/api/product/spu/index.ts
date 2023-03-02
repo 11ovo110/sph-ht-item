@@ -6,8 +6,8 @@ enum API {
   getSpuImage = '/admin/product/spuImageList/',
   getSaleAttr = '/admin/product/spuSaleAttrList/',
   getAllAttr = '/admin/product/baseSaleAttrList',
-  saveSpuInfo = '/admin/product/saveSpuInfo',
-  updateSpuInfo = '/admin/product/updateSpuInfo'
+  saveSpu = '/admin/product/saveSpuInfo',
+  updateSpu = '/admin/product/updateSpuInfo'
 }
 
 export const reqgetSPUDate = (page: number, limit: number, category3Id: number | string) => request.get(API.getSpuData + `${page}/${limit}?category3Id=${category3Id}`); 
@@ -24,12 +24,11 @@ export const reqgetSaleAttr = (spuId: any) => request.get(API.getSaleAttr + spuI
 // 获取所有的销售属性
 export const reqgetAllAttr = () => request.get(API.getAllAttr);
 
-// 添加或者修改的接口
-export const reqAddOrUpdateSpuInfo = (data: any) => {
+export const reqSaveOrUpdateSpu = (data: any) => {
   if(data.id) {
-    return request.post(API.updateSpuInfo, data);
+    return request.post(API.updateSpu, data);
   }else {
-    return request.post(API.saveSpuInfo, data);
+    return request.post(API.saveSpu, data);
   }
 }
 
