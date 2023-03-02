@@ -30,7 +30,7 @@
       <el-select :placeholder="title" v-model="addAttr">
         <el-option :value="`${attr.name}:${attr.id}`" :label="attr.name" v-for="attr in unCheckAttr" :key="attr.id"></el-option>
       </el-select>
-      <el-button type="primary" @click="addSaleAttr" :icon="Plus" style="margin-left: 10px" :disabled="addAttr ? false : true">添加销售属性</el-button>
+      <el-button type="primary" :icon="Plus" style="margin-left: 10px" @click="addSaleAttr">添加销售属性</el-button>
     </el-form-item>
     <el-table border style="margin: 20px 100px" :data="ownAttr">
       <el-table-column type="index" align="center" label="序号" width="100"></el-table-column>
@@ -38,13 +38,13 @@
       <el-table-column label="属性值">
         <template #="{row, $index}">
             <el-tag closable @close="row.spuSaleAttrValueList.splice(index, 1)" style="margin: 0 5px" v-for="(sale, index) in row.spuSaleAttrValueList" :key="sale.id">{{ sale.saleAttrValueName }}</el-tag>
-            <el-input v-if="row.flag" v-model="row.saleAttrValueName" @blur="inputBlur(row)" :ref="(el) => inputRef[$index] = el" size="small" style="display: inline;margin-right: 5px"></el-input>
-            <el-button type="primary" v-else @click="toEdit(row, $index)" :icon="Plus" size="small"></el-button>
+            <el-input :ref="(el) => inputRef[$index] = el" v-if="row.flag" size="small" style="display: inline;margin-right: 5px" v-model="row.saleAttrValueName" @blur="inputBlur(row)"></el-input>
+            <el-button v-else @click="toEdit(row, $index)" type="primary" :icon="Plus"></el-button>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template #="{row, $index}">
-            <el-button :icon="Delete" type="danger" @click="ownAttr.splice($index, 1)"></el-button>
+          <el-button :icon="Delete" type="danger" @click="ownAttr.splice($index, 1)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -63,8 +63,8 @@ import { ElMessage, type UploadProps, type UploadUserFile } from 'element-plus'
 import { reqgetTrademarkList, reqgetAllAttr, reqgetSpuImageList, reqgetSaleAttr, reqSaveOrUpdateSpu } from '@/api/product/spu';
 
 const dialogImageUrl: any = ref('')
-const dialogVisible = ref(false);
-let inputRef: any = ref([]);
+const dialogVisible = ref(false)
+const inputRef: any = ref([]);
 
 const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
   console.log(uploadFile, uploadFiles)
@@ -75,19 +75,20 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
   dialogImageUrl.value = uploadFile.url;
 }
 
-const save = async () => {
+const save = async () => {  
+let spuSaleAttrList = ownAttr.value;
 let imgArr = imgList.value.map((item: { name: any; response: { data: any; }; url: any; }) => ({
   imgName: item.name,
   imgUrl: item.response ? item.response.data : item.url
 }))
+spuParams.value.spuSaleAttrList = spuSaleAttrList;
 spuParams.value.spuImageList = imgArr;
-spuParams.value.spuSaleAttrList = ownAttr.value;
 try {
   await reqSaveOrUpdateSpu(spuParams.value);
-  ElMessage.success(spuParams.value.id ? '修改成功' : '添加成功');
   $emit('getFlag', 0);
+  ElMessage.success(spuParams.value.id ? '修改成功' : '添加成功');
 }catch(e) {
-  ElMessage.success(spuParams.value.id ? '修改失败' : '添加失败');
+  ElMessage.error(spuParams.value.id ? '修改失败' : '添加失败');
 }
 }
 
@@ -107,6 +108,23 @@ let ownAttr: any = ref([]);
 let spuParams: any = ref([]);
 
 let $emit = defineEmits(['getFlag']);
+
+const AddSpuList = async (c3Id: number | string) => {
+  imgList.value = [];
+  ownAttr.value = [];
+  spuParams.value = {
+    spuName: "", //SPU名字
+    tmId: "", //品牌ID
+    description: "", //SPU描述
+    spuImageList: [],
+    spuSaleAttrList: [],
+    category3Id: c3Id, //三级分类的的ID
+  };
+  let result = await reqgetTrademarkList();
+  tradeList.value = result;
+  let result1 = await reqgetAllAttr();
+  attrList.value = result1;
+}
 
 // 定义发送请求的函数
 const getSpuList = async (row: any) => {
@@ -131,70 +149,51 @@ const unCheckAttr = computed(() => {
   return attrList.value.filter((item: { name: any; }) => ownAttr.value.every((attr: { saleAttrName: any; }) => attr.saleAttrName != item.name));
 })
 
+const title = computed(() => {
+  return unCheckAttr.value.length ? `还有${unCheckAttr.value.length}未选择` : '无' 
+})
+
 const addAttr = ref('');
 
 const addSaleAttr = () => {
-  const [saleAttrName, baseSaleAttrId] = addAttr.value.split(':');
-  const newAttr = {
-    baseSaleAttrId,
+  let [saleAttrName, baseSaleAttrId] = addAttr.value.split(':');
+  let newAttr = {
     saleAttrName,
+    baseSaleAttrId,
     spuSaleAttrValueList: []
   }
   ownAttr.value.push(newAttr);
   addAttr.value = '';
 }
 
-const title = computed(() => {
-  return unCheckAttr.value.length ? `还有${unCheckAttr.value.length}选择` : '无'
-})
-
 const inputBlur = (row: any) => {
-  let {baseSaleAttrId, saleAttrValueName} = row;
-  let newValue = {
-    baseSaleAttrId,
-    saleAttrValueName
-  }
-  if(!saleAttrValueName.trim()) {
-    ElMessage.warning('属性值不能为空');
-    return;
-  }
-  let repeat = row.spuSaleAttrValueList.find((item: { saleAttrValueName: any; }) => item.saleAttrValueName == saleAttrValueName);
-  if(repeat) {
-    ElMessage.warning('属性值不能重复');
-    return;
-  }
-  row.spuSaleAttrValueList.push(newValue);
-  row.flag = false;
+let {baseSaleAttrId, saleAttrValueName} = row;
+let newAttr = {
+  baseSaleAttrId,
+  saleAttrValueName
+}
+if(!saleAttrValueName.trim()) {
+  ElMessage.warning('属性名不能为空');
+  return;
+}
+let repeat = row.spuSaleAttrValueList.find((item: { saleAttrValueName: any; }) => item.saleAttrValueName == saleAttrValueName);
+if(repeat) {
+  ElMessage.warning('属性名不能重复');
+  return;
+}
+row.spuSaleAttrValueList.push(newAttr);
+row.flag = false;
 }
 
-const toEdit = (row: any, index: any) => {
+const toEdit = (row: any, $index: any) => {
   row.flag = true;
   row.saleAttrValueName = '';
   nextTick(() => {
-    inputRef.value[index].focus();
+    inputRef.value[$index].focus();
   })
 }
 
-const newAddSpu = async (c3Id: string | number) => {
-  imgList.value = [];
-  ownAttr.value = [];
-  spuParams.value = {
-    spuName: "", //SPU名字
-    tmId: "", //品牌ID
-    description: "", //SPU描述
-    spuImageList: [],
-    spuSaleAttrList: [],
-    category3Id: 0, //三级分类的的ID
-  };
-  spuParams.value.category3Id = c3Id;
-  let result = await reqgetTrademarkList();
-  tradeList.value = result;
-  let result1 = await reqgetAllAttr();
-  attrList.value = result1;
-}
-
-
-defineExpose({getSpuList, newAddSpu});
+defineExpose({getSpuList, AddSpuList});
 
 </script>
 
