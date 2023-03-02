@@ -8,10 +8,8 @@
         @click="add"
         >添加平台属性</el-button
       >
-      <el-form style="margin-top: 20px">
-        <el-table
+        <el-table style="margin-top: 20px"
           :data="attrArr"
-          style="width: 100%"
           border
           v-if="attrArr.length"
         >
@@ -35,17 +33,16 @@
           >>
           <el-table-column label="操作" width="200">
             <template #="{ row, $index }">
-            <el-button type="warning" :icon="Edit" @click="updateAttr(row)"></el-button>
-            <el-popconfirm :title="`你确定删除${row.attrName}吗`" @confirm="deleteAttr(row)">
-              <template #reference>
-                <el-button type="danger" :icon="Delete"></el-button>
-              </template>
-            </el-popconfirm>
-          </template>
+              <el-button type="warning" size="small" :icon="Edit" @click="EditAttr(row)"></el-button>
+              <el-popconfirm :title="`你确定删除${row.attrName}吗?`" @confirm="removeAttr(row.id)">
+                <template #reference>
+                  <el-button type="danger" size="small" :icon="Delete"></el-button>
+                </template>
+              </el-popconfirm>
+            </template>
           </el-table-column>
         </el-table>
         <el-empty description="网络异常" v-else></el-empty>
-      </el-form>
     </div>
     <div v-show="flag == 1">
       <el-form>
@@ -69,8 +66,8 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template #="{row, $index}">
-            <el-button :icon="Delete" type="danger" @click="addSearchParams.attrValueList.splice($index, 1)"></el-button>
+          <template #="{ row, $index }">
+            <el-button type="danger" :icon="Delete" @click="addSearchParams.attrValueList.splice($index, 1)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -83,6 +80,8 @@
 <script setup lang='ts'>
 // 导入全局组件（分类组件）
 import Category from "@/components/Category/index.vue";
+// 引入深拷贝函数
+import  cloneDeep  from "lodash/cloneDeep";
 // 导入仓库
 import { useCategoryStore } from "@/stores/category";
 import { reactive, ref, watch, nextTick, onUnmounted } from "vue";
@@ -92,7 +91,6 @@ import { reqAddattrOrUpdateAttr, reqAttrInfo, reqDeleteAttr } from "@/api/produc
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 // 弹出提示框
 import { ElMessage } from "element-plus";
-import cloneDeep from "lodash/cloneDeep";
 
 // 获取小仓库
 let CategoryStore = useCategoryStore();
@@ -109,7 +107,6 @@ let addSearchParams: any = ref({
   categoryId: '',
   categoryLevel: 3
 });
-
 
 // 监听三级标题的变化，发送请求获取数据
 watch(
@@ -160,11 +157,12 @@ const save = async () => {
   if(addSearchParams.value.attrValueList.length) {
     try {
       await reqAddattrOrUpdateAttr(addSearchParams.value);
-    ElMessage.success('添加成功');
+    ElMessage.success(addSearchParams.value.id ? '修改成功' : '添加成功');
+    GetAttrInfo();
     flag.value = 0;
     GetAttrInfo();
     }catch(e) {
-      ElMessage.error('添加失败');
+      ElMessage.error(addSearchParams.value.id ? '修改失败' : '添加失败');
     }
   }
 }
@@ -201,24 +199,30 @@ const clickDiv = (row: any, index: any) => {
   })
 }
 
-const updateAttr = (row: any) => {
-flag.value = 1;
-addSearchParams.value = cloneDeep(row);
+// 点击编辑按钮的回调
+const EditAttr = (row: any) => {
+  addSearchParams.value = cloneDeep(row);
+  flag.value = 1;
 }
 
-const deleteAttr = async (row: any) => {
-await reqDeleteAttr(row.id);
+// 点击删除的回调
+const removeAttr = async (id: number | string) => {
+try {
+await reqDeleteAttr(id);
 ElMessage.success('删除成功');
 GetAttrInfo();
+}catch(e) {
+ElMessage.error('删除失败');
+}
 }
 
 onUnmounted(() => {
   CategoryStore.c1Id = '';
-  CategoryStore.c1Arr = [];
+  CategoryStore.c1Attr = [];
   CategoryStore.c2Id = '';
-  CategoryStore.c2Arr = [];
+  CategoryStore.c2Attr = [];
   CategoryStore.c3Id = '';
-  CategoryStore.c3Arr = [];
+  CategoryStore.c3Attr = [];
 })
 
 

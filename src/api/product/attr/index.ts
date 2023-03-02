@@ -6,7 +6,7 @@ enum API {
   Category3 = '/admin/product/getCategory3/',
   attrInfo = '/admin/product/attrInfoList/',
   addAttrOrUpdate = '/admin/product/saveAttrInfo',
-  deletAttr = '/admin/product/deleteAttr/'
+  deleteAttr = '/admin/product/deleteAttr/'
 }
 
 export const reqCategory1 = () => request.get(API.Category1);
@@ -19,4 +19,4 @@ export const reqAttrInfo = (c1Id: any, c2Id: any, c3Id: any) => request.get(API.
 
 export const reqAddattrOrUpdateAttr = (data: any) => request.post(API.addAttrOrUpdate, data);
 
-export const reqDeleteAttr = (attrId: number | string) => request.delete(API.deletAttr + attrId);
+export const reqDeleteAttr = (attrId: number | string) => request.delete(API.deleteAttr + attrId);
