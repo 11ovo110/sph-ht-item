@@ -32,9 +32,9 @@
                 type="info"
                 size="small"
                 :icon="InfoFilled"
-                @click="LookSku(row)"
+                @click="getSkuInfo(row)"
               ></el-button>
-              <el-button type="danger" size="small" :icon="Delete" @click="removeSpu(row)"></el-button>
+              <el-button type="danger" size="small" :icon="Delete" @click="deleteSpu(row)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -52,17 +52,17 @@
       <spu-form v-show="flag == 1" @getFlag="getFlag" ref="spu"></spu-form>
       <sku-form v-show="flag == 2" @getFlag="getFlag" ref="sku"></sku-form>
       <el-dialog v-model="Showdialog" title="SKU列表">
-      <el-table :data="SkuList" v-loading="loading">
+      <el-table border v-loading="loading" :data="skuInfo">
         <el-table-column label="sku名字" prop="skuName"></el-table-column>
         <el-table-column label="sku价格" prop="price"></el-table-column>
-        <el-table-column label="sku描述" prop="skuDesc"></el-table-column>
+        <el-table-column label="sku重量" prop="weight"></el-table-column>
         <el-table-column label="sku图片">
           <template #="{row, $index}">
               <img :src="row.skuDefaultImg" alt="" style="width: 100px;height: 100px">
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -74,7 +74,7 @@ import { onUnmounted, ref, watch } from "vue";
 // 引入小仓库
 import { useCategoryStore } from "@/stores/category";
 // 引入请求函数
-import { reqgetSPUDate, reqRemoveSpu, reqSkulist } from "@/api/product/spu/index";
+import { reqdeleteSpu, reqGetSkuInfo, reqgetSPUDate } from "@/api/product/spu/index";
 // 引入sku页面
 import skuForm from "./skuForm.vue";
 // 引入spu页面
@@ -96,7 +96,6 @@ let flag = ref(0);
 // 获取spuForm的实例
 let spu = ref();
 let sku = ref();
-
 let Showdialog = ref(false);
 let loading = ref(false);
 
@@ -159,29 +158,25 @@ const updateSPU = (row: any) => {
   spu.value.getSpuList(row);
 }
 
-const removeSpu = async (row: any) => {
- try {
-  await reqRemoveSpu(row.id);
-  ElMessage.success('删除成功');
- }catch(e) {
-  ElMessage.success('删除失败');
- }
- getSpuDate();
-}
-
 const addSku = (row: any) => {
   flag.value = 2;
-  sku.value.initSkuInfo(categoryStore.c1Id, categoryStore.c2Id, row);
+  sku.value.initaddSku(categoryStore.c1Id, categoryStore.c2Id, row);
 }
 
-const SkuList: any = ref([]);
+const skuInfo: any = ref([]);
 
-const LookSku = async (row: any) => {
-loading.value = true;
-Showdialog.value = true;
-let result = await reqSkulist(row.id);
-SkuList.value = result;
-loading.value = false;
+const getSkuInfo = async (row: any) => {
+ loading.value = true;
+ Showdialog.value = true;
+ let result =  await reqGetSkuInfo(row.id); 
+ skuInfo.value = result;
+ loading.value = false;
+}
+
+const deleteSpu = async (row: any) => {
+await reqdeleteSpu(row.id)
+ElMessage.success('删除成功');
+getSpuDate();
 }
 
 </script>

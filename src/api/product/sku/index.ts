@@ -1,16 +1,16 @@
 import request from "@/utils/request";
 
 enum API {
-  skuAll = '/admin/product/list/',
-  deleteSku = '/admin/product/deleteSku/',
+  SkuList = '/admin/product/list/',
   onSaleSku = '/admin/product/onSale/',
-  cancelSku = '/admin/product/cancelSale/'
+  cancelSku = '/admin/product/cancelSale/',
+  deletSku = '/admin/product/deleteSku/'
 }
 
-export const reqAllSku = (page: any, limit: any) => request.get(API.skuAll + `${page}/${limit}`);
+export const reqgetSkuList = (page: number, limit: number) => request.get(API.SkuList + `${page}/${limit}`);
 
-export const reqdeleteSku = (skuId: number | string) => request.delete(API.deleteSku + skuId);
-
-export const reqSaleSku = (skuId: number | string) => request.get(API.onSaleSku + skuId);
+export const reqOnSaleSku = (skuId: number | string) => request.get(API.onSaleSku + skuId);
 
 export const reqCancelSku = (skuId: number | string) => request.get(API.cancelSku + skuId);
+
+export const reqdeleteSku = (skuId: number | string) => request.delete(API.deletSku + skuId);
