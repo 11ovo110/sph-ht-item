@@ -8,13 +8,13 @@ enum API {
   getAllAttr = '/admin/product/baseSaleAttrList',
   saveSpu = '/admin/product/saveSpuInfo',
   updateSpu = '/admin/product/updateSpuInfo',
-  getAttrList = '/admin/product/attrInfoList/',
-  saveSkuInfo = '/admin/product/saveSkuInfo',
-  getSkuInfo = '/admin/product/findBySpuId/',
-  deleteSpu = '/admin/product/deleteSpu/'
+  AllAttrInfo = '/admin/product/attrInfoList/',
+  saveSku = '/admin/product/saveSkuInfo',
+  getAllSku = '/admin/product/findBySpuId/',
+  removeSpu = '/admin/product/deleteSpu/'
 }
 
-export const reqgetSPUDate = (page: number, limit: number, category3Id: number | string) => request.get(API.getSpuData + `${page}/${limit}?category3Id=${category3Id}`);
+export const reqgetSPUDate = (page: number, limit: number, category3Id: number | string) => request.get(API.getSpuData + `${page}/${limit}?category3Id=${category3Id}`); 
 
 // 获取所有品牌的请求
 export const reqgetTrademarkList = () => request.get(API.getTrademarkList);
@@ -29,17 +29,21 @@ export const reqgetSaleAttr = (spuId: any) => request.get(API.getSaleAttr + spuI
 export const reqgetAllAttr = () => request.get(API.getAllAttr);
 
 export const reqSaveOrUpdateSpu = (data: any) => {
-  if (data.id) {
+  if(data.id) {
     return request.post(API.updateSpu, data);
-  } else {
+  }else {
     return request.post(API.saveSpu, data);
   }
 }
 
-export const reqGetAttrList = (c1Id: any, c2Id: any, c3Id: any) => request.get(API.getAttrList + `${c1Id}/${c2Id}/${c3Id}`);
+// 获取平台属性
+export const reqGetAllAttrInfo = (c1Id: any, c2Id:any, c3Id: any) => request.get(API.AllAttrInfo + `${c1Id}/${c2Id}/${c3Id}`);
 
-export const reqSaveSku = (data: any) => request.post(API.saveSkuInfo, data);
+// 添加新的Sku
+export const reqSaveNewSku = (data: any) => request.post(API.saveSku, data);
 
-export const reqGetSkuInfo = (spuId: any) => request.get(API.getSkuInfo + spuId);
+//获取sku列表
+export const reqgetAllSku = (spuId: any) => request.get(API.getAllSku + spuId);
 
-export const reqdeleteSpu = (spuId: any) => request.delete(API.deleteSpu + spuId);
+//删除sku
+export const reqRemoveSpu = (skuId: any) => request.delete(API.removeSpu + skuId);
