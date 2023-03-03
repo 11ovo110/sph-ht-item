@@ -7,7 +7,11 @@ enum API {
   getSaleAttr = '/admin/product/spuSaleAttrList/',
   getAllAttr = '/admin/product/baseSaleAttrList',
   saveSpu = '/admin/product/saveSpuInfo',
-  updateSpu = '/admin/product/updateSpuInfo'
+  updateSpu = '/admin/product/updateSpuInfo',
+  AllAttrInfo = '/admin/product/attrInfoList/',
+  saveSku = '/admin/product/saveSkuInfo',
+  getAllSku = '/admin/product/findBySpuId/',
+  removeSpu = '/admin/product/deleteSpu/'
 }
 
 export const reqgetSPUDate = (page: number, limit: number, category3Id: number | string) => request.get(API.getSpuData + `${page}/${limit}?category3Id=${category3Id}`); 
@@ -32,3 +36,14 @@ export const reqSaveOrUpdateSpu = (data: any) => {
   }
 }
 
+// 获取平台属性
+export const reqGetAllAttrInfo = (c1Id: any, c2Id:any, c3Id: any) => request.get(API.AllAttrInfo + `${c1Id}/${c2Id}/${c3Id}`);
+
+// 添加新的Sku
+export const reqSaveNewSku = (data: any) => request.post(API.saveSku, data);
+
+//获取sku列表
+export const reqgetAllSku = (spuId: any) => request.get(API.getAllSku + spuId);
+
+//删除sku
+export const reqRemoveSpu = (skuId: any) => request.delete(API.removeSpu + skuId);

@@ -25,14 +25,16 @@
                 type="primary"
                 size="small"
                 :icon="Plus"
+                @click="AddSku(row)"
               ></el-button>
               <el-button type="warning" size="small" :icon="Edit" @click="updateSPU(row)"></el-button>
               <el-button
                 type="info"
                 size="small"
                 :icon="InfoFilled"
+                @click="spuInfo(row)"
               ></el-button>
-              <el-button type="danger" size="small" :icon="Delete"></el-button>
+              <el-button type="danger" size="small" :icon="Delete" @click="removeSpu(row)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -48,7 +50,19 @@
         />
       </div>
       <spu-form v-show="flag == 1" @getFlag="getFlag" ref="spu"></spu-form>
-      <sku-form v-show="flag == 2"></sku-form>
+      <sku-form ref="sku" v-show="flag == 2" @getFlag="getFlag"></sku-form>
+      <el-dialog v-model="Showdialog" title="SKU列表">
+      <el-table border :data="skuList">
+        <el-table-column label="sku名字" :show-overflow-tooltip="true" prop="skuName"></el-table-column>
+        <el-table-column label="sku价格" prop="price"></el-table-column>
+        <el-table-column label="sku重量" prop="weight"></el-table-column>
+        <el-table-column label="sku图片">
+          <template #="{row, $index}">
+              <img :src="row.skuDefaultImg" alt="" style="width: 100px;height: 100px">
+          </template>
+        </el-table-column>
+      </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -60,11 +74,12 @@ import { onUnmounted, ref, watch } from "vue";
 // 引入小仓库
 import { useCategoryStore } from "@/stores/category";
 // 引入请求函数
-import { reqgetSPUDate } from "@/api/product/spu/index";
+import { reqgetAllSku, reqgetSPUDate, reqRemoveSpu } from "@/api/product/spu/index";
 // 引入sku页面
 import skuForm from "./skuForm.vue";
 // 引入spu页面
 import spuForm from "./spuForm.vue";
+import { ElNotification } from "element-plus";
 
 // 使用小仓库
 let categoryStore = useCategoryStore();
@@ -80,6 +95,9 @@ let total = ref(0);
 let flag = ref(0);
 // 获取spuForm的实例
 let spu = ref();
+let sku = ref();
+// 是否显示dialog
+let Showdialog = ref(false);
 
 // 监听，如果三级Id发生变化就会触发
 watch(
@@ -139,6 +157,47 @@ const updateSPU = (row: any) => {
   flag.value = 1;
   spu.value.getSpuList(row);
 }
+
+const AddSku = (row: any) => {
+  flag.value = 2;
+  sku.value.initAddSpu(categoryStore.c1Id, categoryStore.c2Id, row);  
+}
+
+const skuList: any = ref([]);
+
+const spuInfo = async (row: any) => {
+skuList.value = [];
+Showdialog.value = true;
+let result = await reqgetAllSku(row.id);
+skuList.value = result;
+}
+
+const removeSpu = async (row: any) => {
+  try {
+    await reqRemoveSpu(row.id);
+    ElNotification({
+      title: "提示信息",
+      message: "删除成功",
+      type: "success",
+    });
+    getSpuDate();
+  }catch(e) {
+    ElNotification({
+      title: "提示信息",
+      message: "删除失败",
+      type: "warning",
+    });
+  }
+}
+
+onUnmounted(() => {
+  categoryStore.c1Id = '';
+  categoryStore.c1Attr = [];
+  categoryStore.c2Id = '';
+  categoryStore.c2Attr = [];
+  categoryStore.c3Id = '';
+  categoryStore.c3Attr = [];
+})
 
 </script>
 
