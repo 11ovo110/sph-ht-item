@@ -8,10 +8,10 @@ enum API {
   getAllAttr = '/admin/product/baseSaleAttrList',
   saveSpu = '/admin/product/saveSpuInfo',
   updateSpu = '/admin/product/updateSpuInfo',
-  AllAttrInfo = '/admin/product/attrInfoList/',
-  saveSku = '/admin/product/saveSkuInfo',
-  getAllSku = '/admin/product/findBySpuId/',
-  removeSpu = '/admin/product/deleteSpu/'
+  removeSpu = '/admin/product/deleteSpu/',
+  getAttrInfo = '/admin/product/attrInfoList/',
+  addSku = '/admin/product/saveSkuInfo',
+  getSkuList = '/admin/product/findBySpuId/'
 }
 
 export const reqgetSPUDate = (page: number, limit: number, category3Id: number | string) => request.get(API.getSpuData + `${page}/${limit}?category3Id=${category3Id}`); 
@@ -36,14 +36,11 @@ export const reqSaveOrUpdateSpu = (data: any) => {
   }
 }
 
-// 获取平台属性
-export const reqGetAllAttrInfo = (c1Id: any, c2Id:any, c3Id: any) => request.get(API.AllAttrInfo + `${c1Id}/${c2Id}/${c3Id}`);
+export const reqRemoveSpu = (spuId: number | string) => request.delete(API.removeSpu + spuId);
 
-// 添加新的Sku
-export const reqSaveNewSku = (data: any) => request.post(API.saveSku, data);
+export const reqgetAttrInfo = (c1Id: any, c2Id: any, c3Id: any) => request.get(API.getAttrInfo + `${c1Id}/${c2Id}/${c3Id}`);
 
-//获取sku列表
-export const reqgetAllSku = (spuId: any) => request.get(API.getAllSku + spuId);
+export const reqaddSku = (data: any) => request.post(API.addSku, data);
 
-//删除sku
-export const reqRemoveSpu = (skuId: any) => request.delete(API.removeSpu + skuId);
+export const reqSkulist = (spuId: number | string) => request.get(API.getSkuList + spuId);
+
