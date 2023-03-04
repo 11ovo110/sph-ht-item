@@ -4,9 +4,22 @@ import { reqLogin, reqGetInfo, reqLogout } from "@/api/acl";
 // 引入token函数
 import { getToken, setToken, removeToken } from "@/utils/token-utils";
 // 引入所有路由组件
-import { staticRoutes } from "@/router/routes";
+import { staticRoutes, asyncRoutes, anyRoute } from "@/router/routes";
 import type {UserInfoState} from './interface/index'; 
 import type {loginData} from '@/api/model/user';
+import cloneDeep from 'lodash/cloneDeep';
+import router from "@/router";
+
+function filterAsyncRoutes(asyncRoutes: any, routes: any) {
+  return asyncRoutes.filter((item: { name: any; children: any; }) => {
+    if(routes.includes(item.name)) {
+      if(item.children) {
+        item.children = filterAsyncRoutes(item.children, routes);
+      }
+      return true;
+    }
+  })
+}
 
 // 创建小仓库
 export const useUserInfoStore = defineStore('userInfo', {
@@ -37,7 +50,10 @@ export const useUserInfoStore = defineStore('userInfo', {
       // 仓库存储用户名
       this.name = result.name;
       // 仓库存储路由组件
-      this.menuRoutes = staticRoutes;
+      let routes = result.routes;
+      let userAsyncRoutes = filterAsyncRoutes(cloneDeep(asyncRoutes), routes);
+      this.menuRoutes = [...staticRoutes, ...userAsyncRoutes, anyRoute];
+      this.menuRoutes.forEach(item => router.addRoute(item));
     },
     async reset() {
       // 退出登录逻辑

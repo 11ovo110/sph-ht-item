@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>1</title>
+  </head>
+  <body>
+      <script>
+      const asyncRoute =  [{
+  path: '/product',
+  name: 'Product',
+  component: () => import('@/layout/index.vue'),
+  meta: {
+    title: '商品管理',                                                
+    icon: 'ele-ShoppingBag'
+  },
+  redirect: '/product/trademark',
+  children: [
+    {
+      path: 'trademark',
+      name: 'Trademark',
+      component: () => import('@/views/product/trademark/trademark.vue'),
+      meta: {
+        title: '品牌管理',
+        icon: 'ele-Present',
+      }
+    },
+    {
+      path: 'attr',
+      name: 'Attr',
+      component: () => import('@/views/product/attr/attr.vue'),
+      meta: {
+        title: '平台属性管理',
+        icon: 'ele-CollectionTag',
+      }
+    },
+    {
+      path: 'spu',
+      name: 'Spu',
+      component: () => import('@/views/product/spu/spu.vue'),
+      meta: {
+        title: 'spu管理',
+        icon: 'ele-Ship',
+      }
+    },
+    {
+      path: 'sku',
+      name: 'Sku',
+      component: () => import('@/views/product/sku/sku.vue'),
+      meta: {
+        title: 'sku管理',
+        icon: 'ele-WindPower',
+      }
+    }
+  ]
+}]
+      
+      const routes = ['Product', 'Spu', 'Sku'];
+
+      function filterAsyncRoute(asyncRoute, routes) {
+        return asyncRoute.filter(item => {
+          if(routes.includes(item.name)) {
+            if(item.children && item.children.length) {
+              item.children = filterAsyncRoute(item.children, routes);
+            }
+            return item;
+          }
+        })
+      }
+
+      // filterAsyncRoute(asyncRoute, routes);
+      console.log(filterAsyncRoute(asyncRoute, routes));
+      </script>
+  </body>
+</html>

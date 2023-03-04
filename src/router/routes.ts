@@ -48,62 +48,95 @@ import type { RouteRecordRaw } from 'vue-router';
     }]
   },
   {
-    path: '/product',
-    name: 'Produce',
+    path: '/test',
+    name: 'Test',
     component: () => import('@/layout/index.vue'),
     meta: {
-      title: '商品管理',                                                
-      icon: 'ele-ShoppingBag'
+      title: '测试模块',                                                
+      icon: 'ele-Plus'
     },
-    redirect: '/product/trademark',
     children: [
       {
-        path: 'trademark',
-        name: 'Trademark',
-        component: () => import('@/views/product/trademark/trademark.vue'),
+        path: 'demo',
+        name: 'Demo',
+        component: () => import('@/views/Test/demo/index.vue'),
         meta: {
-          title: '品牌管理',
-          icon: 'ele-Present',
+          title: '测试模块1',
+          icon: 'ele-Edit',
         }
       },
       {
-        path: 'attr',
-        name: 'Attr',
-        component: () => import('@/views/product/attr/attr.vue'),
+        path: 'demo1',
+        name: 'Demo1',
+        component: () => import('@/views/Test/demo1/index.vue'),
         meta: {
-          title: '平台属性管理',
-          icon: 'ele-CollectionTag',
-        }
-      },
-      {
-        path: 'spu',
-        name: 'Spu',
-        component: () => import('@/views/product/spu/spu.vue'),
-        meta: {
-          title: 'spu管理',
-          icon: 'ele-Ship',
-        }
-      },
-      {
-        path: 'sku',
-        name: 'Sku',
-        component: () => import('@/views/product/sku/sku.vue'),
-        meta: {
-          title: 'sku管理',
-          icon: 'ele-WindPower',
+          title: '测试模块2',
+          icon: 'ele-infoFilled',
         }
       }
     ]
   },
-  /* 匹配任意的路由 必须最后注册 */
-  { 
-    path: '/:pathMatch(.*)', 
-    name: 'Any',
-    redirect: '/404', 
-    meta: {
-      hidden: true 
-    }
-  }
 ];
+
+// 异步路由
+export const asyncRoutes =  [{
+  path: '/product',
+  name: 'Product',
+  component: () => import('@/layout/index.vue'),
+  meta: {
+    title: '商品管理',                                                
+    icon: 'ele-ShoppingBag'
+  },
+  redirect: '/product/trademark',
+  children: [
+    {
+      path: 'trademark',
+      name: 'Trademark',
+      component: () => import('@/views/product/trademark/trademark.vue'),
+      meta: {
+        title: '品牌管理',
+        icon: 'ele-Present',
+      }
+    },
+    {
+      path: 'attr',
+      name: 'Attr',
+      component: () => import('@/views/product/attr/attr.vue'),
+      meta: {
+        title: '平台属性管理',
+        icon: 'ele-CollectionTag',
+      }
+    },
+    {
+      path: 'spu',
+      name: 'Spu',
+      component: () => import('@/views/product/spu/spu.vue'),
+      meta: {
+        title: 'spu管理',
+        icon: 'ele-Ship',
+      }
+    },
+    {
+      path: 'sku',
+      name: 'Sku',
+      component: () => import('@/views/product/sku/sku.vue'),
+      meta: {
+        title: 'sku管理',
+        icon: 'ele-WindPower',
+      }
+    }
+  ]
+}]
+
+
+/* 匹配任意的路由 必须最后注册 */
+export const anyRoute = { 
+  path: '/:pathMatch(.*)', 
+  name: 'Any',
+  redirect: '/404', 
+  meta: {
+    hidden: true 
+  }
+}
 
 
