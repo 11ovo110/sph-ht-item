@@ -6,6 +6,7 @@
         type="primary"
         :disabled="CategoryStore.c3Id ? false : true"
         @click="add"
+        v-has="'btn.Attr.add'"
         >添加平台属性</el-button
       >
         <el-table style="margin-top: 20px"
@@ -33,10 +34,10 @@
           >>
           <el-table-column label="操作" width="200">
             <template #="{ row, $index }">
-              <el-button type="warning" size="small" :icon="Edit" @click="EditAttr(row)"></el-button>
+              <el-button type="warning" v-has="'btn.Attr.update'" size="small" :icon="Edit" @click="EditAttr(row)"></el-button>
               <el-popconfirm :title="`你确定删除${row.attrName}吗?`" @confirm="removeAttr(row.id)">
                 <template #reference>
-                  <el-button type="danger" size="small" :icon="Delete"></el-button>
+                  <el-button type="danger" size="small" :icon="Delete" v-has="'btn.Attr.delete'"></el-button>
                 </template>
               </el-popconfirm>
             </template>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>01-echarts基本使用</title>
+  <script src="./echarts.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .containers {
+      width: 800px;
+      height: 400px;
+      margin: 10px auto;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="containers"></div>
+  <script>
+    let mycharts = echarts.init(document.querySelector('.containers'));
+    mycharts.setOption({
+      title: {
+        text: '企业工作报表',
+        textStyle: {
+          color: 'red'
+        },
+        left: 'center'
+      },
+      xAxis: {
+        show: true,
+        type: 'category'
+      },
+      yAxis: {
+        show: true
+      },
+      series: {
+        type: 'bar',
+        data: [100, 200, 300, 400, 500]
+      }
+    })
+  </script>
+</body>
+
+</html>

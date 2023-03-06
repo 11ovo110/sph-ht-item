@@ -13,7 +13,7 @@ import router from "@/router";
 function filterAsyncRoutes(asyncRoutes: any, routes: any) {
   return asyncRoutes.filter((item: { name: any; children: any; }) => {
     if(routes.includes(item.name)) {
-      if(item.children) {
+      if(item.children && item.children.length) {
         item.children = filterAsyncRoutes(item.children, routes);
       }
       return true;
@@ -27,7 +27,8 @@ export const useUserInfoStore = defineStore('userInfo', {
     token: getToken(),  // 从本地获取token
     avatar: '',  // 头像
     name: '',    // 用户名
-    menuRoutes: []  //layout一级路由组件|左侧菜单组件需要用数据
+    menuRoutes: [],  //layout一级路由组件|左侧菜单组件需要用数据
+    buttons: []
   }),
   actions: {
     // 登录业务逻辑
@@ -45,6 +46,8 @@ export const useUserInfoStore = defineStore('userInfo', {
       // 获取用户信息逻辑
       // 发送用户请求
       let result: any = await reqGetInfo();
+      // 仓库存储按钮权限
+      this.buttons = result.buttons;
       // 仓库存储头像
       this.avatar = result.avatar;
       // 仓库存储用户名
@@ -66,6 +69,10 @@ export const useUserInfoStore = defineStore('userInfo', {
       // 清空本地存储的token
       removeToken();
       this.menuRoutes = '';
+
+      let routes = router.getRoutes();
+      routes.forEach((item: any) => router.removeRoute(item.name))
+      staticRoutes.forEach(item => router.addRoute(item));
     }
   }
 })

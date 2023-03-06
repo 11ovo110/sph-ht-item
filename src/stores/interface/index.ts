@@ -5,7 +5,7 @@ export interface UserInfoState {
   token: string | null;
 	avatar: string;
 	name: string;
-
+  buttons: string[],
   menuRoutes: RouteRecordRaw[] | string // 用于生成导航菜单的路由列表
 }
 

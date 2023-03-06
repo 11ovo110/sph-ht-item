@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>1</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      canvas {
+        display: block;
+        margin: 10px auto;
+        background-color: aqua;
+      }
+    </style>
+  </head>
+  <body>
+      <canvas width="600" height="400"></canvas>
+      <button>导出图片</button>
+      <script>
+        let canvas = document.querySelector('canvas');;
+        let ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'skyblue';
+        ctx.fillRect(20, 100, 50, 300);
+        ctx.fillStyle = 'red';
+        ctx.fillRect(100, 150, 50, 250);
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(180, 200, 50, 200);
+        ctx.fillStyle = 'black';
+        ctx.fillRect(260, 50, 50, 350);
+
+        // 设置字体样式
+        ctx.font = '20px 微软雅黑';
+        ctx.fillText('ling', 200, 200)
+
+        let btn = document.querySelector('button');
+        btn.onclick = function() {
+         let url = canvas.toDataURL();
+         console.log(url);
+        }
+      </script>
+  </body>
+</html>

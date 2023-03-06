@@ -19,8 +19,10 @@ import './styles/index.scss'
 import ElSvg from './components/SvgIcon/ElSvg'
 //引入全局组件 category
 import Category from './components/Category/index.vue';
+import isHas from '@/utils/directive';
 //函数调用传递app
 ElSvg(app)
+isHas(app);
 
 import './permission'
 

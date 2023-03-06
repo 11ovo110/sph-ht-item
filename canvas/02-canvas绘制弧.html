@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>02-canvas绘制弧</title>
+    <style>
+       * {
+        margin: 0;
+        padding: 0;
+      }
+
+      canvas {
+        display: block;
+        margin: 10px auto;
+        background-color: aqua;
+      }
+    </style>
+  </head>
+  <body>
+      <canvas width="600" height="400"></canvas>
+
+      <script>
+        let canvas = document.querySelector('canvas');
+        let ctx = canvas.getContext('2d');
+        // ctx.beginPath();
+        // ctx.arc(300, 200, 50, 0,  2 * Math.PI, true);
+        // ctx.stroke();
+
+        // for(let i = 0; i < 100; i++) {
+        //   ctx.beginPath();
+        //   ctx.arc(300, 200, 100, 0,  2 * Math.PI, true);
+        //   ctx.stroke();
+        // }
+
+
+        for(let i = 0; i < 100; i++) {
+          let r = Math.random() * 255;
+          let g = Math.random() * 255;
+          let b = Math.random() * 255;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
+          ctx.lineWidth = 3;
+          ctx.arc(300, 200, 20 + i * 2, 0,  2 * Math.PI, true);
+          ctx.stroke();
+        }
+
+      </script>
+  </body>
+</html>

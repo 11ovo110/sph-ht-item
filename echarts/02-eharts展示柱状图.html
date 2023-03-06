@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>02-eharts展示柱状图</title>
+  <script src="./echarts.js"></script>
+  <style>
+    .box {
+      width: 800px;
+      height: 400px;
+      margin: 100px auto;
+      border: 1px solid #eee;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    let mycharts = echarts.init(document.querySelector('.box'));
+    let options = {
+      title: {
+        show: true,
+        text: '硅谷',
+        link: 'http://www.baidu.com',
+        target: 'self',
+        textStyle: {
+          color: 'rgb(123,22,66)',
+          fontWeight: 'normal'
+        },
+        left: 'center',
+        // 标题组件背景颜色
+        backgroundColor: 'yellow',
+        subtext: 'bj0825',
+        subtextStyle: {
+          color: 'red'
+        }
+      },
+      xAxis: {
+        // 均匀分布
+        type: 'category',
+        show: true,
+        name: '日期',
+        // 坐标轴位置
+        nameLocation: 'center',
+        // 轴标题与x轴线距离
+        nameGap: 35,
+        // 轴名称样式调式
+        nameTextStyle: {
+          color: 'yellowgreen'
+        },
+        // 轴名称旋转角度
+        nameRotate: 15,
+        // 轴线的样式
+        axisLine: {
+          lineStyle: {
+            color: 'yellowgreen'
+          }
+        }
+      },
+      yAxis: {
+        show: true,
+        axisLine: {
+          show: true
+        },
+        axisTick: {
+          show: true
+        }
+      },
+      series: [
+      {
+          type: 'bar',
+          data: [100, 200, 300, 400, 500, 600, 350],
+          //柱状图底部背景颜色设置
+          showBackground: true,
+          //底部背景颜色设置
+          backgroundStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                   color: 'yellowgreen'
+                },
+                {
+                  offset: 1, color: 'hotpink'
+                }
+              ],
+              global: false // 是否允许渐变
+            }
+          },
+          label: {
+            show: true,
+            // 图片标签位置
+            position: 'top',
+            color: 'aqua'
+          },
+          // 每一个柱条样式
+          itemStyle: {
+            color: function(item) {
+              let arr = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple'];
+              return arr[item.dataIndex];
+            }
+          }
+        },
+        {
+                type: 'bar',
+                data: [10, 20, 30, 40, 50, 60, 70]
+            },
+            {
+                type: 'line',
+                data: [99, 123, 23, 66, 16, 88, 22]
+            }
+      ]
+        
+      
+    }
+
+    mycharts.setOption(options);
+  </script>
+</body>
+
+</html>

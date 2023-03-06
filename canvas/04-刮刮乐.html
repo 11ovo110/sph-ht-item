@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>04-刮刮乐</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      position: relative;
+      width: 400px;
+      height: 200px;
+      border: 1px solid black;
+    }
+
+    .container div {
+      width: 400px;
+      height: 200px;
+      text-align: center;
+      line-height: 200px;
+      font-size: 20px;
+    }
+
+    canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div>恭喜你中了1000万</div>
+    <canvas width="400px" height="200px"></canvas>
+  </div>
+  <script>
+    let canvas = document.querySelector('canvas');;
+    let ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#81869b';
+    ctx.fillRect(0, 0, 400, 200);
+
+    canvas.onmousedown = function() {
+      canvas.onmousemove = function(e) {
+        let x = e.offsetX;
+        let y = e.offsetY;
+        ctx.clearRect(x, y, 5, 5);
+      }
+    }
+
+    canvas.onmouseup = function() {
+      canvas.onmousemove = null;
+    }
+  </script>
+</body>
+
+</html>

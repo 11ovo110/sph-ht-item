@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>03-canvas绘制线段</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      canvas {
+        display: block;
+        margin: 10px auto;
+        background-color: aqua;
+      }
+    </style>
+  </head>
+  <body>
+      <canvas width="600" height="400"></canvas>
+      <script>
+        let canvas = document.querySelector('canvas');
+        let ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.moveTo(100, 100);
+        ctx.lineTo(200, 200);
+        ctx.lineTo(300, 50);
+        ctx.stroke();
+      </script>
+  </body>
+</html>

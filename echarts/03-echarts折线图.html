@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>03-echarts折线图</title>
+  <script src="./echarts.js"></script>
+  <style>
+    .box {
+      width: 800px;
+      height: 400px;
+      margin: 100px auto;
+      border: 1px solid;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    let mycharts = echarts.init(document.querySelector('.box'));
+    let options = {
+      grid: {
+        show: true,
+        left: 30,
+        right: 10,
+        bottom: 30,
+        backgroundColor: {
+          type: 'linear',
+          x: 1,
+          y: 0,
+          x2: 0,
+          y2: 0,
+          colorStops: [
+            {
+              offset: 0, color: 'green'
+            },
+            {
+              offset: 1, color: 'yellow'
+            }
+          ],
+          global: false
+        },
+      },
+      title: {
+        text: '企业数据报表'
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false
+      },
+      yAxis: {
+        splitLine: {
+          lineStyle: {
+            color: 'red'
+          }
+        }
+      },
+      series: {
+        type: 'line',
+        data: [0, 100, 88, 23, 77, 99, 54, 36, 48, 65, 32, 48],
+        smooth: true,
+        lineStyle: {
+          color: 'rgba(155,25,15,1)',
+          width: 2,
+          opacity: .5
+        },
+        symbol: 'pin',
+        symbolSize: 15,
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {offset: 0, color: 'green'},
+              {offset: 1, color: 'yellow'}
+            ],
+            global: false
+          }
+        },
+        label: {
+          show: true,
+          position: 'top',
+          rotate: 35
+        }
+      }
+    }
+
+    mycharts.setOption(options);
+  </script>
+</body>
+
+</html>
