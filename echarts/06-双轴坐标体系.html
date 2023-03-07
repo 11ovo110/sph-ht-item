@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>06-双轴坐标体系</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      width: 100vw;
+      height: 300px;
+      border: 1px solid black;
+      margin: 10px auto;
+    }
+  </style>
+  <script src="./echarts.js"></script>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    let myecharts = echarts.init(document.querySelector('.box'));
+    let options = {
+      xAxis: {
+        type: 'category'
+      },
+      yAxis: [
+        {
+
+          axisLine: {
+            show: true
+          },
+          splitLine: {
+            show: false
+          }
+        },
+        {
+          axisLine: {
+            show: true
+          },
+          splitLine: {
+            show: false
+          }
+
+        }
+      ],
+      series: [
+            {
+                type: 'bar',
+                data: [10, 20, 30, 40, 50, 60, 70],
+                yAxisIndex: 0
+            },
+            {
+                type: 'bar',
+                data: [100, 22, 34, 66, 16, 22, 99],
+                yAxisIndex: 1
+            }
+        ]
+    }
+    myecharts.setOption(options);
+  </script>
+</body>
+
+</html>

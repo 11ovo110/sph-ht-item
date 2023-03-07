@@ -19,5 +19,86 @@
   </head>
   <body>
       <div class="box"></div>
+      <script>
+        let myecharts = echarts.init(document.querySelector('.box'));
+        let options = {
+          grid: {
+            left: 20,
+            right: 20,
+            bottom: 20
+        },
+        //x轴组件
+        xAxis: {
+            type:"category"
+        },
+        //y轴组件
+        yAxis: {},
+        series: [
+            {
+                //类型
+                type: "pie",
+                data: [{ name: "苹果", value: 100 }, { name: "香蕉", value: 30 }, { name: "鸭梨", value: 66 }],
+                //饼图大小设置
+                width: 260,
+                height: 260,
+                //饼图半径
+                radius: 50,
+                //调整位置
+                left: 250,
+                //饼图颜色调试
+                itemStyle: {
+                    color: function (item) {
+                        let arr = ['orange', 'cyan', 'purple']
+                        return arr[item.dataIndex];
+                    }
+                },
+                //饼图视觉引导线
+                labelLine: {
+                    show: true,//显示与隐藏视觉引导线
+                    length: 20,
+                    length2: 20,
+                    smooth: true,//是否平滑曲线
+                    //外观
+                    lineStyle: {
+                        color: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+                            colorStops: [{
+                                offset: 0, color: 'red' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'blue' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        }
+                    }
+                },
+                //文字标签
+                label: {
+                    position: 'outside',//位置
+                    color: 'purple',
+                    fontSize: 12
+                }
+
+            },
+            {
+                type:'bar',
+                data:[10,20,30,40,50,60,70]
+            },
+            {
+                type:'bar',
+                data:[70,60,50,40,30,20,10]
+            }
+            ,
+            {
+                type:'line',
+                data:[33,77,12,88,35,99,81]
+            }
+        ]
+        }
+        myecharts.setOption(options);
+      </script>
   </body>
 </html>
