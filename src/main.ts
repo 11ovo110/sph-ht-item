@@ -25,6 +25,7 @@ ElSvg(app)
 isHas(app);
 
 import './permission'
+import '@/mock/mockServe';
 
 app.use(pinia).use(router).use(ElementPlus, {locale: zhCn}).mount('#app')
 

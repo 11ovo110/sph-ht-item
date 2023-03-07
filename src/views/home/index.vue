@@ -1,26 +1,26 @@
 <template>
-  <div class="home">
-    Hello, {{userInfoStore.name}}
+  <div>
+    <chartTop :data="dataList"></chartTop>
+    <chartMiddle></chartMiddle>
+    <chartBottom></chartBottom>
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'Home',
-}
-</script>
-<script lang="ts" setup>
-import { useUserInfoStore } from '@/stores/userInfo';
+<script setup lang='ts'>
+import { reqData } from '@/api/home';
+import { onMounted, ref } from 'vue';
+import chartBottom from './chartBottom/index.vue';
+import chartMiddle from './chartMiddle/index.vue';
+import chartTop from './chartTop/index.vue';
 
-const userInfoStore = useUserInfoStore()
+let dataList = ref({});
 
+onMounted(async () => {
+  let result =  await reqData();
+  dataList.value = result;
+})
 </script>
 
 <style scoped>
-  .home {
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    font-size: 30px;
-  }
+
 </style>
