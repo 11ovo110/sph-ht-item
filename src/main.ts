@@ -26,6 +26,12 @@ isHas(app);
 
 import './permission'
 import '@/mock/mockServe';
+// vue-echarts插件：依赖echarts插件
+import * as echarts from 'echarts';
+// vue-echarts提供组件专门开发图形图标
+import vchart from 'vue-echarts';
+// 定义为全局组件
+app.component('v-chart', vchart);
 
 app.use(pinia).use(router).use(ElementPlus, {locale: zhCn}).mount('#app')
 

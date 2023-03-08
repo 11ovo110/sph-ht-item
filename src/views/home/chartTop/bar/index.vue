@@ -1,18 +1,16 @@
 <template>
-  <div class="box" ref="box">
-
+  <div class="box">
+    <v-chart autoresize :option="getOption()"></v-chart>
   </div>
+ 
 </template>
 
 <script setup lang='ts'>
 import * as echarts from 'echarts';
 import { onMounted, ref } from 'vue';
 
-let box = ref();
-
-onMounted(() => {
-  let myecharts = echarts.init(box.value);
-  let options = {
+function getOption() {
+  return  ({
     grid: {
       top: 0,
       bottom: 0,
@@ -66,11 +64,15 @@ onMounted(() => {
     tooltip: {
       axisPointer: {
         type: 'cross'
-      }
-    }
+      },
+      confine: true,
+      position: function (point: any, params: any, dom: any, rect: any, size: any) {
+      // 固定在顶部
+      return [point[0], '10%'];
   }
-  myecharts.setOption(options);
-})
+    }
+  })
+}
 
 let props = defineProps(['orderUserTrend'])
 </script>

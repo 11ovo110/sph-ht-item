@@ -1,7 +1,7 @@
 <template>
   <div>
     <chartTop :data="dataList"></chartTop>
-    <chartMiddle></chartMiddle>
+    <chartMiddle :data="dataList"></chartMiddle>
     <chartBottom></chartBottom>
   </div>
 </template>

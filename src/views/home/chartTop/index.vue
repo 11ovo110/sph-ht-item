@@ -57,7 +57,23 @@
     </el-col>
     <el-col :span="6">
       <card>
-        
+        <template #title>
+            <div>{{ data['//4'] }}</div>
+        </template>
+        <template #number>
+          <div>
+            {{ data.usersTotal }}            
+          </div>
+        </template>
+        <template #chart>
+            <Progress></Progress>
+          </template>
+        <template #bottom>
+           <div>
+            <span>日同比:{{ data.userGrowthLastDay }}</span>
+            <span style="margin-left: 8px">月同比:{{ data.userGrowthLastMonth }}</span>
+           </div>
+        </template>
       </card>
     </el-col>
   </el-row>
@@ -67,6 +83,7 @@
 import card from './card/index.vue';
 import Line from './Line/index.vue'
 import bar from './bar/index.vue';
+import Progress from './progress/index.vue'
 defineProps(['data']);
 </script>
 

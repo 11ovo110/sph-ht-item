@@ -9,7 +9,6 @@ import { onMounted, ref } from 'vue';
 let box = ref();
 onMounted(() => {
   let myecharts = echarts.init(box.value);
-  console.log(props);
   let options = {
     xAxis: {
       type: 'category',
@@ -78,8 +77,11 @@ onMounted(() => {
     }
   }
   myecharts.setOption(options);
-
+  window.onresize = function() {
+  myecharts.resize();
+}
 })
+
 
 let props = defineProps(['orderTrend']); 
 </script>
